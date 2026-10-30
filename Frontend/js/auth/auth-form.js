@@ -1,10 +1,12 @@
 import { authenticateUser, registerUser } from "./auth-storage.js";
 import { notifyAuthChange } from "./auth-state.js";
+import { initPasswordRecovery, showRecoveryCode } from "./auth-recovery.js";
 
 export function initAuthForms() {
   const login = document.querySelector("#login-form");
   const signup = document.querySelector("#signup-form");
   if (!login || !signup) return;
+  initPasswordRecovery();
 
   function clearErrors(form) {
     form.querySelectorAll(".auth-field-error").forEach((item) => { item.textContent = ""; });
@@ -54,12 +56,11 @@ export function initAuthForms() {
     submit.disabled = true;
     submit.textContent = "가입 중...";
     try {
-      await registerUser({ name, email: email.value.trim(), password, passwordConfirm, terms });
+      const result = await registerUser({ name, email: email.value.trim(), password, passwordConfirm, terms });
       document.querySelector("#login-email").value = email.value.trim();
       document.querySelector("#login-success-message").textContent = "회원가입이 완료되었습니다. 로그인해주세요.";
       signup.reset();
-      document.querySelector("#signup-modal").close();
-      document.querySelector("#login-modal").showModal();
+      showRecoveryCode(result, "회원가입이 완료되었습니다. 복구코드를 보관하고 로그인해주세요.");
     } catch (error) { showError("#signup-email-error", error.message); }
     finally { submit.disabled = false; submit.textContent = "회원가입"; }
   });

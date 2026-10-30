@@ -80,6 +80,11 @@
   gap: 18px;
 }
 
+.recovery-code-value {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  letter-spacing: .02em;
+}
+
 .auth-field {
   display: grid;
   gap: 7px;

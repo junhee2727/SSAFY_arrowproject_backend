@@ -59,6 +59,7 @@
       <button class="btn auth-primary-button" type="submit">로그인</button>
     </form>
 
+    <p class="auth-switch"><button type="button" data-modal-target="password-reset-modal">비밀번호 찾기</button></p>
     <p class="auth-switch">아직 계정이 없나요? <button type="button" data-modal-target="signup-modal">회원가입</button></p>
   </div>
 </dialog>
@@ -75,7 +76,7 @@
       </button>
     </header>
 
-    <p class="auth-modal-description" id="signup-modal-description">회원가입하고 여행 이야기를 함께 나눠보세요.</p>
+    <p class="auth-modal-description" id="signup-modal-description">회원가입하고 여행 이야기를 함께 나눠보세요. 가입 후 비밀번호 찾기에 사용할 복구코드를 발급합니다.</p>
 
     <form class="auth-form" id="signup-form" novalidate>
       <div class="auth-field">
@@ -112,5 +113,60 @@
     </form>
 
     <p class="auth-switch">이미 계정이 있나요? <button type="button" data-modal-target="login-modal">로그인</button></p>
+  </div>
+</dialog>
+
+<dialog class="auth-modal" id="password-reset-modal" aria-labelledby="password-reset-title" aria-describedby="password-reset-description">
+  <div class="auth-modal-shell">
+    <header class="auth-modal-header">
+      <div>
+        <p class="auth-modal-eyebrow">다시 여행을 시작해요</p>
+        <h2 id="password-reset-title">비밀번호 찾기</h2>
+      </div>
+      <button class="auth-modal-close" type="button" aria-label="비밀번호 찾기 창 닫기" data-modal-close><span aria-hidden="true">×</span></button>
+    </header>
+    <p class="auth-modal-description" id="password-reset-description">가입할 때 보관한 복구코드로 새 비밀번호를 설정하세요. 이메일과 복구코드가 모두 필요합니다. 코드를 잃어버리면 이 방법으로 계정을 복구할 수 없습니다.</p>
+    <form class="auth-form" id="password-reset-form" novalidate>
+      <div class="auth-field">
+        <label for="reset-email">이메일</label>
+        <input class="form-control" id="reset-email" name="email" type="email" autocomplete="email" required aria-describedby="reset-error" />
+      </div>
+      <div class="auth-field">
+        <label for="reset-recovery-code">복구코드</label>
+        <input class="form-control" id="reset-recovery-code" name="recoveryCode" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" required aria-describedby="reset-error" />
+      </div>
+      <div class="auth-field">
+        <label for="reset-password">새 비밀번호</label>
+        <input class="form-control" id="reset-password" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="8자 이상 입력하세요" required aria-describedby="reset-error" />
+      </div>
+      <div class="auth-field">
+        <label for="reset-password-confirm">새 비밀번호 확인</label>
+        <input class="form-control" id="reset-password-confirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="8" required aria-describedby="reset-error" />
+      </div>
+      <p class="auth-field-error" id="reset-error" role="status" aria-live="polite"></p>
+      <button class="btn auth-primary-button" type="submit">비밀번호 재설정</button>
+    </form>
+    <p class="auth-switch"><button type="button" data-modal-target="login-modal">로그인으로 돌아가기</button></p>
+  </div>
+</dialog>
+
+<dialog class="auth-modal" id="recovery-code-modal" aria-labelledby="recovery-code-title" aria-describedby="recovery-code-description">
+  <div class="auth-modal-shell">
+    <header class="auth-modal-header">
+      <div>
+        <p class="auth-modal-eyebrow">계정을 위한 보관함</p>
+        <h2 id="recovery-code-title">복구코드 보관</h2>
+      </div>
+      <button class="auth-modal-close" type="button" aria-label="복구코드 창 닫기" data-modal-close><span aria-hidden="true">×</span></button>
+    </header>
+    <p class="auth-modal-description" id="recovery-code-description">이 코드는 지금 한 번만 표시합니다. 비밀번호 관리자 등 안전한 곳에 보관하세요. 비밀번호 재설정에 사용하면 기존 코드는 만료되고 새 코드가 발급됩니다.</p>
+    <p class="auth-form-success" id="recovery-code-message" role="status"></p>
+    <div class="auth-field">
+      <label for="recovery-code-value">나의 복구코드</label>
+      <input class="form-control recovery-code-value" id="recovery-code-value" type="text" readonly autocomplete="off" autocapitalize="none" spellcheck="false" />
+      <button class="btn btn-outline-primary" type="button" id="copy-recovery-code">복구코드 복사</button>
+      <p class="small text-secondary" id="recovery-copy-status" role="status" aria-live="polite"></p>
+    </div>
+    <button class="btn auth-primary-button" id="recovery-code-continue" type="button">보관했어요. 로그인하기</button>
   </div>
 </dialog>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the 11-API contract against a running Tomcat (standard library only)."""
+"""Run the API and password recovery contract against a running Tomcat."""
 import http.cookiejar
 import json
 import sys
@@ -50,7 +50,9 @@ class Client:
         decoded = json.loads(payload)
         if expected < 300:
             assert 'data' in decoded
-            assert not any(field in payload.decode() for field in ['passwordHash', 'passwordSalt', 'passwordConfirm'])
+            assert not any(field in payload.decode() for field in ['passwordHash', 'passwordSalt', 'passwordConfirm', 'recoveryCodeHash', 'credentialVersion'])
+            if path not in ['/members/register', '/auth/password-reset']:
+                assert 'recoveryCode' not in payload.decode()
             return decoded['data']
         assert 'code' in decoded['error'] and 'message' in decoded['error']
         return decoded['error']
@@ -66,6 +68,60 @@ def credentials(email):
 
 def post(title, **changes):
     return dict(category='review', title=title, content='한글 본문\n\n<script>window.shouldNotRun=true</script>') | changes
+
+
+def verify_recovery():
+    first, second, other, guest = Client(), Client(), Client(), Client()
+    email, other_email = uuid.uuid4().hex + '@example.com', uuid.uuid4().hex + '@example.com'
+    password = other_password = ' password123 '
+    try:
+        account = first.call('POST', '/members/register', registration(email), expected=201)
+        code = account['recoveryCode']
+        assert len(code) == 43
+        first.call('POST', '/auth/login', credentials(email))
+        second.call('POST', '/auth/login', credentials(email))
+        other_account = other.call('POST', '/members/register', registration(other_email), expected=201)
+        other.call('POST', '/auth/login', credentials(other_email))
+        request = dict(email=email, recoveryCode=code, password=' newPassword123 ', passwordConfirm=' newPassword123 ')
+        guest.call('GET', '/auth/password-reset', expected=405)
+        wrong = guest.call('POST', '/auth/password-reset', request | {'recoveryCode':'wrong'}, expected=400)
+        missing = guest.call('POST', '/auth/password-reset', request | {'email':uuid.uuid4().hex+'@example.com'}, expected=400)
+        assert wrong == missing and wrong['code'] == 'INVALID_RECOVERY'
+        guest.call('POST', '/auth/password-reset', request | {'email':other_email}, expected=400)
+        guest.call('POST', '/auth/password-reset', request | {'password':'short', 'passwordConfirm':'short'}, expected=400)
+        guest.call('POST', '/auth/password-reset', request | {'passwordConfirm':'different'}, expected=400)
+        guest.call('POST', '/auth/password-reset', request | {'recoveryCode':None}, expected=400)
+        guest.call('POST', '/auth/password-reset', request | {'memberId':account['id']}, expected=400)
+        guest.call('POST', '/auth/password-reset', request, expected=403, headers={'Origin':'http://elsewhere.invalid'})
+        guest.call('POST', '/auth/password-reset', request, expected=403, headers={'X-Requested-With':None})
+        assert first.call('GET', '/members/me')['id'] == account['id']
+        changed = guest.call('POST', '/auth/password-reset', request | {'email':' '+email.upper()+' '})
+        password = request['password']
+        assert changed['id'] == account['id'] and changed['recoveryCode'] != code
+        guest.call('GET', '/members/me', expected=401)  # no automatic login
+        first.call('GET', '/members/me', expected=401)
+        second.call('PUT', '/members/me', {'name':'만료세션'}, expected=401)
+        assert other.call('GET', '/members/me')['id'] == other_account['id']
+        guest.call('POST', '/auth/login', credentials(email), expected=401)
+        guest.call('POST', '/auth/password-reset', request, expected=400)  # spent code
+        first.call('POST', '/auth/login', {'email':email, 'password':password})
+        guest.call('POST', '/auth/password-reset', request | {'recoveryCode':changed['recoveryCode'], 'password':'nextPassword123', 'passwordConfirm':'nextPassword123'})
+        password = 'nextPassword123'
+        first.call('GET', '/members/me', expected=401)
+        first.call('POST', '/auth/login', {'email':email, 'password':password})
+        first.call('POST', '/auth/password-reset', dict(email=other_email, recoveryCode=other_account['recoveryCode'], password='otherPassword123', passwordConfirm='otherPassword123'))
+        other_password = 'otherPassword123'
+        assert first.call('GET', '/members/me')['id'] == account['id']  # resetting another account does not log this one out
+        other.call('GET', '/members/me', expected=401)
+        first.call('DELETE', '/members/me', expected=204)
+        guest.call('POST', '/auth/password-reset', request, expected=400)
+    finally:
+        for client, account_email, current_password in [(first,email,password),(other,other_email,other_password)]:
+            try:
+                client.call('POST','/auth/login', {'email':account_email, 'password':current_password})
+                client.call('DELETE','/members/me',expected=204)
+            except Exception:
+                pass
 
 
 def main():
@@ -146,7 +202,8 @@ def main():
         other.call('GET','/members/me',expected=401)
         other.call('POST','/auth/login',credentials(other_email))
         other.call('DELETE','/members/me',expected=204)
-        print(f'PASS: {checks} HTTP contract checks; all 11 APIs, UTF-8, sessions, ownership, search, validation and cascade deletion')
+        verify_recovery()
+        print(f'PASS: {checks} HTTP checks; 12 APIs, CORS, UTF-8, sessions, ownership, search, validation, recovery rotation and session invalidation')
     finally:
         for client, account in [(owner,email),(other,other_email)]:
             try:

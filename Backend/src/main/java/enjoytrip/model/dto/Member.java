@@ -12,24 +12,35 @@ public final class Member {
     private final String passwordHash;
     private final String passwordSalt;
     private final Instant createdAt;
+    private final String recoveryCodeHash;
+    private final long credentialVersion;
 
     public Member(String id, String name, String email,
                   String passwordHash, String passwordSalt,
-                  Instant createdAt) {
+                  Instant createdAt, String recoveryCodeHash, long credentialVersion) {
         this.id = Objects.requireNonNull(id);
         this.name = Objects.requireNonNull(name);
         this.email = Objects.requireNonNull(email);
         this.passwordHash = Objects.requireNonNull(passwordHash);
         this.passwordSalt = Objects.requireNonNull(passwordSalt);
         this.createdAt = Objects.requireNonNull(createdAt);
+        this.recoveryCodeHash = Objects.requireNonNull(recoveryCodeHash);
+        this.credentialVersion = credentialVersion;
     }
 
     // 이름을 바꾼 새 객체를 반환한다. DAO에서 기존 객체를 교체한다.
     public Member withName(String name) {
         return new Member(
-                id, name, email, passwordHash, passwordSalt, createdAt
+                id, name, email, passwordHash, passwordSalt, createdAt, recoveryCodeHash, credentialVersion
         );
     }
+
+    public Member withCredentials(String hash, String salt, String recoveryHash) {
+        return new Member(id, name, email, hash, salt, createdAt, recoveryHash, Math.incrementExact(credentialVersion));
+    }
+
+    public String getRecoveryCodeHash() { return recoveryCodeHash; }
+    public long getCredentialVersion() { return credentialVersion; }
 
     public String getId() {
         return id;

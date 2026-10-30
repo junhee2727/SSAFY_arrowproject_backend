@@ -12,7 +12,8 @@ class BoardServiceTest {
     private final MemberService members = BasicMemberService.getService();
     private final BoardService boards = BasicBoardService.getService();
     private MemberDto member() {
-        return members.register(new MemberDto.SignupRequest("여행자", UUID.randomUUID()+"@example.com", "password123", "password123", true));
+        var result = members.register(new MemberDto.SignupRequest("여행자", UUID.randomUUID()+"@example.com", "password123", "password123", true));
+        return members.profile(result.id());
     }
     private BoardDto.SaveRequest post(String title) { return new BoardDto.SaveRequest("review", title, "한글 본문"); }
     @Test void searchAndPaginationShareFilterAndClampPage() {

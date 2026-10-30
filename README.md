@@ -1,21 +1,21 @@
 # EnjoyTrip 회원·게시판 백엔드
 
-기존 EnjoyTrip 화면을 Servlet JSON API에 연결한 Maven WAR 프로젝트입니다. 회원·인증 6개와 자유게시판 5개, 총 11개 API를 구현합니다.
+기존 EnjoyTrip 화면을 Servlet JSON API에 연결한 Maven WAR 프로젝트입니다. 회원·인증 7개와 자유게시판 5개, 총 12개 API를 구현합니다.
 
 ## 구현 범위
 
-- 회원가입, 세션 로그인·로그아웃, 내 정보 조회, 이름 수정, 회원 탈퇴
+- 회원가입, 세션 로그인·로그아웃, 내 정보 조회, 이름 수정, 회원 탈퇴, 복구코드 기반 비밀번호 재설정
 - 자유게시판 목록·검색·7건 페이징, 상세, 등록·수정·삭제
 - 작성자 권한 검사, 이름 변경 시 작성자명 반영, 탈퇴 시 작성 글 삭제
 - 기존 지도·관광지 검색·여행계획 코드는 유지합니다. 관광 데이터 API는 기존 브라우저 연동을 사용합니다.
 
-댓글·사진·공지사항·비밀번호 복구·로그인 유지·활동 통계는 최소 API 명세에서 보류한 기능입니다. 해당 조작은 화면에서 제거했고, 공지사항 직접 방문에는 준비 중 안내를 표시합니다.
+댓글·사진·공지사항·로그인 유지·활동 통계는 최소 API 명세에서 보류한 기능입니다. 해당 조작은 화면에서 제거했고, 공지사항 직접 방문에는 준비 중 안내를 표시합니다.
 
 데이터는 메모리 DAO에 저장합니다. 서버 재시작/재배포 시 회원과 글이 사라집니다. DB, JPA, Spring Boot는 사용하지 않습니다. 회원/글 ID는 현재 API 명세의 문자열 형식(UUID), 목록 번호는 별도의 증가하는 long 값입니다.
 
 ## 참고와 구조
 
-- 기준: [Notion API 명세서](https://www.notion.so/40919c9b9e0b80158b3deaf34f1974dc)
+- 기준: [기존 최소 API 명세서](https://www.notion.so/40919c9b9e0b80158b3deaf34f1974dc). 이후 추가한 비밀번호 복구 API와 변경된 가입 응답은 [복구 API 문서](Backend/Docs/비밀번호_복구_API.md)를 따른다.
 - 참고 예제: `BE_06_Project_sol`의 Servlet·Service·DAO 구성
 - 예제의 `MemberController/AuthController → MemberService/BasicMemberService → MemberDao` 분리와 singleton 흐름을 따릅니다. 이번 명세는 JSON API이므로 기존 정적 화면을 View로 사용하며, 예제의 action/JSP 화면 이동을 그대로 복사하지 않았습니다.
 - 예제 FileMemberDao의 파일 직렬화 대신 저장소 지침에 따라 InMemoryMemberDao/InMemoryBoardDao를 사용합니다.
@@ -164,6 +164,17 @@ Copy-Item ".\Backend\target\enjoytrip.war" "$env:CATALINA_BASE\webapps\enjoytrip
 
 Tomcat 8080과 Live Server 5500을 동시에 실행합니다. 프론트 파일 수정은 Live Server에 바로 반영되며, 키 설정도 프론트의 `Frontend/config.env`에서 읽습니다. 회원·게시판 요청과 로그인 쿠키는 8080의 Tomcat이 처리합니다. Live Server 종료는 VS Code 상태 표시줄의 `Port: 5500`을 누릅니다. Python 정적 서버 등 다른 프로세스를 5500에서 동시에 실행하지 않습니다.
 
+## 비밀번호 찾기 사용 방법
+
+1. 회원가입을 완료하면 **복구코드 보관** 창이 열립니다. 코드를 비밀번호 관리자 등 안전한 곳에 보관하고 로그인합니다.
+2. 비밀번호를 잊었다면 로그인 창의 **비밀번호 찾기**를 누르고 이메일·복구코드·새 비밀번호·새 비밀번호 확인을 입력합니다.
+3. 성공하면 기존 비밀번호와 기존 복구코드가 만료되며, 해당 회원의 모든 기존 로그인 세션도 다음 인증 요청에서 거절됩니다.
+4. 새로 발급된 복구코드를 보관하고 새 비밀번호로 다시 로그인합니다. 자동 로그인은 하지 않습니다.
+
+복구코드는 가입·재설정 성공 응답에서만 한 번 반환하고, 서버에는 해시만 저장합니다. 일반 회원 조회·로그인 응답에는 포함하지 않으며 브라우저 저장소에도 저장하지 않습니다. 코드를 잃어버리면 이메일만으로 재설정할 수 없습니다. 메모리 DAO를 사용하는 임시 프로젝트이므로 서버 재시작 시 계정과 복구 정보가 함께 사라집니다.
+
+복구 방식은 사전에 보관한 무작위 코드로 본인을 확인하는 방식입니다. [OWASP 비밀번호 복구 지침](https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html)을 참고해 코드 해시 저장·일회 사용·새 비밀번호 확인·기존 세션 만료를 적용했습니다.
+
 ## API 요약
 
 모든 경로 앞에 `/enjoytrip/api`를 붙입니다. 요청·응답은 UTF-8 JSON이고 삭제·로그아웃 성공은 빈 204 응답입니다.
@@ -173,6 +184,7 @@ Tomcat 8080과 Live Server 5500을 동시에 실행합니다. 프론트 파일 �
 | POST | /members/register | 가입 |
 | POST | /auth/login | 로그인 |
 | POST | /auth/logout | 로그아웃 |
+| POST | /auth/password-reset | 복구코드로 비밀번호 재설정·새 코드 발급 |
 | GET | /members/me | 내 정보·로그인 상태 |
 | PUT | /members/me | 이름 수정 |
 | DELETE | /members/me | 탈퇴·글 삭제 |
@@ -204,7 +216,7 @@ node --test $testFiles
 py -3 .\Backend\scripts\check_api.py
 ```
 
-`py`가 없다면 Python 3의 `python` 명령으로 바꿔 실행합니다. `check_api.py`는 11개 API의 한글 왕복, 세션 ID 갱신/쿠키, 중복 가입, 검증 오류, 작성자 권한, 정렬/검색/페이징, 이름 반영, 탈퇴 연계와 다른 세션 무효화를 검증합니다. 고유한 테스트 회원을 만들고 종료 시 정리합니다. 기본 API 검사 주소는 `http://127.0.0.1:8080/enjoytrip`이며 Live Server origin을 보내 CORS 응답·사전 요청·세션도 함께 검증합니다.
+`py`가 없다면 Python 3의 `python` 명령으로 바꿔 실행합니다. `check_api.py`는 12개 API의 한글 왕복, 세션 ID 갱신/쿠키, 중복 가입, 검증 오류, 작성자 권한, 정렬/검색/페이징, 이름 반영, 탈퇴 연계, 복구코드 교체·재사용 거절과 재설정 후 기존 세션 만료를 검증합니다. 고유한 테스트 회원을 만들고 종료 시 정리합니다. 기본 API 검사 주소는 `http://127.0.0.1:8080/enjoytrip`이며 Live Server origin을 보내 CORS 응답·사전 요청·세션도 함께 검증합니다.
 
 Chrome과 Node.js/npm이 설치되어 있으면 선택적으로 브라우저 검사도 실행할 수 있습니다. Playwright는 임시 폴더에 설치하고 Windows Chrome 경로를 명시합니다.
 
@@ -260,3 +272,10 @@ Maven compiler 3.15.0(release 25), WAR 3.5.1, Servlet 6.1.0 provided, JSTL API 3
 - Live Server 주소의 지도 SDK 로드와 서울 종로구 역사관광 검색(66곳, 경복궁 포함) 통과
 
 Windows 실환경 실행과 현재 위치 권한을 사용하는 내 주변 검색은 미검증입니다.
+
+## 비밀번호 찾기 추가 후 검증
+
+- JDK 25 서비스 테스트 12개 통과: 복구코드 해시 보관, 잘못된 정보 거절, 코드 재사용·동시 재설정, 기존 비밀번호·세션 만료, 다른 회원 세션 유지.
+- 실제 Tomcat HTTP 검사 105건 통과: 복구 API의 CORS·입력 오류·로그인 상태·응답 비밀값 제외 및 기존 11개 API 회귀.
+- 프론트엔드 테스트 78개 통과.
+- Chrome에서 가입 시 코드 발급·보관, 복구 입력 오류, 코드 재사용 거절, 재설정 후 새 코드 발급·새 비밀번호 로그인·이전 세션 만료를 검증했습니다. 새 화면은 1440/820/390px에서 확인했습니다.

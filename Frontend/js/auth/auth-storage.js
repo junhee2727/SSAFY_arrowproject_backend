@@ -25,6 +25,10 @@ export function registerUser(values) {
   return apiRequest("members/register", { method: "POST", body: values });
 }
 
+export function resetPassword(values) {
+  return apiRequest("auth/password-reset", { method: "POST", body: values });
+}
+
 export async function authenticateUser(email, password) {
   currentUser = await apiRequest("auth/login", { method: "POST", body: { email, password } });
   return currentUser;

@@ -15,7 +15,8 @@ const path = require("node:path");
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   const email = `browser-${Date.now()}@example.com`;
-  const password = "browser1234";
+  let password = "browser1234";
+  let recoveryCode;
   let guest;
   let deleted = false;
   async function api(method, route, data) {
@@ -43,7 +44,13 @@ const path = require("node:path");
     await page.locator("#signup-password-confirm").fill(password);
     await page.locator("#signup-terms").check();
     await page.locator("#signup-form [type=submit]").click();
+    await page.locator("#recovery-code-modal").waitFor({ state: "visible" });
+    recoveryCode = await page.locator("#recovery-code-value").inputValue();
+    assert.match(recoveryCode, /^[A-Za-z0-9_-]{43}$/);
+    await page.locator("#recovery-code-continue").click();
     await page.locator("#login-modal").waitFor({ state: "visible" });
+    await page.waitForFunction(() => document.querySelector("#recovery-code-value").value === "");
+    assert.equal(await page.locator("#recovery-code-value").inputValue(), "");
     assert.match(await page.locator("#login-success-message").innerText(), /회원가입이 완료/);
     await page.locator("#login-password").fill(password);
     await page.locator("#login-form [type=submit]").click();
@@ -140,6 +147,61 @@ const path = require("node:path");
     }
     await otherPage.reload();
     await otherPage.locator("#free-board-detail-meta").filter({ hasText: "이름변경여행자" }).waitFor();
+
+    // Recover from a separate, signed-out browser. Existing authenticated sessions must expire.
+    await otherPage.locator("[data-auth-guest] [data-modal-target=login-modal]").click();
+    await otherPage.locator("[data-modal-target=password-reset-modal]").click();
+    await otherPage.locator("#reset-recovery-code").fill("discard-on-close");
+    await otherPage.locator("#reset-password").fill("discardPassword123");
+    for (let tab = 0; tab < 8; tab++) {
+      await otherPage.keyboard.press("Tab");
+      const focus = await otherPage.evaluate(() => ({ inPage: document.hasFocus(), dialog: document.activeElement.closest("dialog")?.id }));
+      // Native dialog navigation may visit the browser toolbar; page controls remain modal.
+      if (focus.inPage) assert.equal(focus.dialog, "password-reset-modal");
+    }
+    await otherPage.keyboard.press("Escape");
+    await otherPage.locator("#password-reset-modal").waitFor({ state: "hidden" });
+    await otherPage.waitForFunction(() => document.querySelector("#reset-recovery-code").value === "" && document.querySelector("#reset-password").value === "");
+    await otherPage.locator("[data-auth-guest] [data-modal-target=login-modal]").click();
+    await otherPage.locator("[data-modal-target=password-reset-modal]").click();
+    await otherPage.locator("#reset-email").fill(email);
+    await otherPage.locator("#reset-recovery-code").fill("wrong");
+    await otherPage.locator("#reset-password").fill("newBrowser1234");
+    await otherPage.locator("#reset-password-confirm").fill("mismatch");
+    await otherPage.locator("#password-reset-form [type=submit]").click();
+    await otherPage.getByText("비밀번호가 일치하지 않습니다.", { exact: true }).waitFor();
+    await otherPage.locator("#reset-password-confirm").fill("newBrowser1234");
+    await otherPage.locator("#password-reset-form [type=submit]").click();
+    await otherPage.getByText("이메일 또는 복구코드를 확인해주세요.", { exact: true }).waitFor();
+    await otherPage.locator("#reset-recovery-code").fill(recoveryCode);
+    for (const width of [1440, 820, 390]) {
+      await otherPage.setViewportSize({ width, height: 1000 });
+      await otherPage.screenshot({ path: `${screenshots}/password-reset-${width}.png`, fullPage: true });
+      assert.equal(await otherPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true);
+    }
+    await otherPage.locator("#password-reset-form [type=submit]").click();
+    await otherPage.locator("#recovery-code-modal").waitFor({ state: "visible" });
+    const nextCode = await otherPage.locator("#recovery-code-value").inputValue();
+    assert.match(nextCode, /^[A-Za-z0-9_-]{43}$/);
+    assert.notEqual(nextCode, recoveryCode);
+    assert.equal((await api("GET", "members/me")).status(), 401);
+    assert.equal((await api("POST", "auth/login", { email, password })).status(), 401);
+    assert.equal((await api("POST", "auth/password-reset", { email, recoveryCode, password: "unusedPassword123", passwordConfirm: "unusedPassword123" })).status(), 400);
+    password = "newBrowser1234";
+    recoveryCode = nextCode;
+    await otherPage.locator("#recovery-code-continue").click();
+    await otherPage.waitForFunction(() => document.querySelector("#recovery-code-value").value === "");
+    assert.equal(await otherPage.locator("#recovery-code-value").inputValue(), "");
+    assert.equal(await otherPage.locator("#reset-password").inputValue(), "");
+    await otherPage.locator("#login-password").fill(password);
+    await otherPage.locator("#login-form [type=submit]").click();
+    await otherPage.locator("[data-auth-user]").waitFor({ state: "visible" });
+    await otherPage.reload();
+    await otherPage.locator("[data-auth-user]").waitFor({ state: "visible" });
+    assert.equal(await otherPage.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }).includes("recoveryCode")), false);
+    await page.reload();
+    await page.locator("#my-page-login-required").waitFor({ state: "visible" });
+    await login();
     await page.locator("[data-logout]").click();
     await page.locator("#my-page-login-required").waitFor({ state: "visible" });
     await login();
@@ -162,7 +224,7 @@ const path = require("node:path");
     await page.locator("#signup-modal").waitFor({ state: "visible" });
     await page.keyboard.press("Escape");
     await page.locator("#signup-modal").waitFor({ state: "hidden" });
-    console.log("PASS: browser signup/login, keyboard focus, create/edit, session reload, cross-browser visibility, search/paging, rename/logout/delete and 1440/820/390 layouts");
+    console.log("PASS: browser signup/recovery-code/password-reset, old session expiry, new password login, keyboard focus, board CRUD, search/paging, rename/logout/delete and 1440/820/390 layouts");
   } finally {
     if (!deleted) {
       try { await api("POST", "auth/login", { email, password }); await api("DELETE", "members/me"); } catch {}

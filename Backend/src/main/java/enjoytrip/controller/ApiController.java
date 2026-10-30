@@ -100,7 +100,11 @@ public abstract class ApiController extends HttpServlet {
     protected String userId(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         String id = session == null ? null : (String) session.getAttribute("memberId");
-        try { return BasicMemberService.getService().profile(id).id(); }
+        try {
+            Object version = session == null ? null : session.getAttribute("credentialVersion");
+            if (!(version instanceof Long)) throw ApiException.loginRequired();
+            return BasicMemberService.getService().authenticatedProfile(id, (Long) version).id();
+        }
         catch (ApiException e) {
             if (session != null) session.invalidate();
             throw e;

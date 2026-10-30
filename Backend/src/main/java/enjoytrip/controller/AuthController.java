@@ -14,14 +14,20 @@ public final class AuthController extends ApiController {
     private final MemberService service = BasicMemberService.getService();
     protected void handle(HttpServletRequest req, HttpServletResponse res) throws IOException {
         String path = req.getPathInfo();
-        if (!"/login".equals(path) && !"/logout".equals(path)) { notFound(); return; }
+        if (!"/login".equals(path) && !"/logout".equals(path) && !"/password-reset".equals(path)) { notFound(); return; }
         if (!"POST".equals(req.getMethod())) { methodNotAllowed(res, "POST"); return; }
         if ("/login".equals(path)) {
-            MemberDto member = service.login(read(req, MemberDto.LoginRequest.class));
+            MemberService.Authentication authentication = service.login(read(req, MemberDto.LoginRequest.class));
             HttpSession session = req.getSession();
             req.changeSessionId();
-            session.setAttribute("memberId", member.id());
-            success(res, 200, member);
+            session.setAttribute("memberId", authentication.member().id());
+            session.setAttribute("credentialVersion", authentication.credentialVersion());
+            success(res, 200, authentication.member());
+        } else if ("/password-reset".equals(path)) {
+            MemberDto.RecoveryResponse result = service.resetPassword(read(req, MemberDto.PasswordResetRequest.class));
+            HttpSession session = req.getSession(false);
+            if (session != null && result.id().equals(session.getAttribute("memberId"))) session.invalidate();
+            success(res, 200, result);
         } else {
             HttpSession session = req.getSession(false);
             if (session != null) session.invalidate();
