@@ -22,13 +22,13 @@
       <section class="my-page-hero" aria-labelledby="my-page-title">
         <p class="my-page-eyebrow">나의 여행 활동</p>
         <h1 id="my-page-title">마이페이지</h1>
-        <p>회원정보와 내가 작성한 게시글·댓글을 한곳에서 관리하세요.</p>
+        <p>회원정보를 확인하고 이름을 수정하세요.</p>
       </section>
 
       <section class="my-page-panel my-page-login-required" id="my-page-login-required" hidden>
         <div class="my-page-empty-icon" aria-hidden="true">✈</div>
         <h2>로그인이 필요합니다</h2>
-        <p>로그인하면 회원정보와 게시판 활동을 확인할 수 있어요.</p>
+        <p>로그인하면 회원정보를 확인할 수 있어요.</p>
         <button class="my-page-primary-button" type="button" data-modal-target="login-modal">로그인</button>
       </section>
 
@@ -58,71 +58,17 @@
               </div>
               <p class="my-page-message" id="profile-message" role="status" aria-live="polite"></p>
               <div class="profile-actions">
-                <button class="my-page-secondary-button" type="button" id="profile-password-button" data-modal-target="reset-password-modal">비밀번호 변경</button>
                 <button class="my-page-primary-button" type="submit">이름 저장</button>
               </div>
             </form>
           </article>
 
-          <div class="stats-grid" aria-label="나의 활동 통계">
-            <article class="stat-card">
-              <span>작성한 글</span>
-              <strong id="my-post-count">0</strong>
-              <small>개</small>
-            </article>
-            <article class="stat-card">
-              <span>작성한 댓글</span>
-              <strong id="my-comment-count">0</strong>
-              <small>개</small>
-            </article>
-            <article class="stat-card stat-card-wide">
-              <span>내 글 조회수</span>
-              <strong id="my-view-count">0</strong>
-              <small>회</small>
-            </article>
-          </div>
-        </section>
-
-        <section class="my-page-panel crud-panel" aria-labelledby="crud-title">
-          <div class="my-page-section-heading">
-            <div>
-              <p class="my-page-section-eyebrow">LOCALSTORAGE CRUD</p>
-              <h2 id="crud-title">CRUD 기능 확인</h2>
-            </div>
-          </div>
-          <div class="crud-grid">
-            <a class="crud-card" href="./free-board-write.html"><strong>C</strong><span>새 게시글 작성</span><small>Create</small></a>
-            <a class="crud-card" href="#my-posts-section"><strong>R</strong><span>내 활동 조회</span><small>Read</small></a>
-            <a class="crud-card" href="#profile-form"><strong>U</strong><span>정보·게시글 수정</span><small>Update</small></a>
-            <a class="crud-card" href="#account-danger-zone"><strong>D</strong><span>게시글·계정 삭제</span><small>Delete</small></a>
-          </div>
-        </section>
-
-        <section class="my-page-panel activity-panel" id="my-posts-section" aria-labelledby="my-posts-title">
-          <div class="my-page-section-heading">
-            <div>
-              <p class="my-page-section-eyebrow">MY POSTS</p>
-              <h2 id="my-posts-title">내가 작성한 게시글</h2>
-            </div>
-            <a class="my-page-primary-button" href="./free-board-write.html">새 글 작성</a>
-          </div>
-          <div class="activity-list" id="my-post-list"></div>
-        </section>
-
-        <section class="my-page-panel activity-panel" aria-labelledby="my-comments-title">
-          <div class="my-page-section-heading">
-            <div>
-              <p class="my-page-section-eyebrow">MY COMMENTS</p>
-              <h2 id="my-comments-title">내가 작성한 댓글</h2>
-            </div>
-          </div>
-          <div class="activity-list" id="my-comment-list"></div>
         </section>
 
         <section class="my-page-panel danger-zone" id="account-danger-zone" aria-labelledby="danger-zone-title">
           <div>
             <h2 id="danger-zone-title">계정 삭제</h2>
-            <p>계정을 삭제하면 작성한 게시글과 댓글도 함께 삭제되며 복구할 수 없습니다.</p>
+            <p>계정을 삭제하면 작성한 게시글도 함께 삭제되며 복구할 수 없습니다.</p>
           </div>
           <button class="my-page-danger-button" id="delete-account-button" type="button">계정 삭제</button>
         </section>
@@ -139,7 +85,7 @@
 
       await loadIncludes();
       initAuthModals();
-      initAuthState();
+      await initAuthState();
       initAuthForms();
       initMyPage();
     </script>
