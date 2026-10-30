@@ -1,0 +1,69 @@
+---
+title: EnjoyTrip — Shared utilities and frontend error class
+---
+classDiagram
+direction TB
+%% ~ means package-private; $ means static; + means public; - means private.
+class MemoryLock {
+  <<utility>>
+  +Object MONITOR$
+}
+class Validation {
+  <<package-private>>
+  -Pattern EMAIL$
+  ~text(String value, int min, int max, String label)$ String
+  ~name(String value)$ String
+  ~email(String value)$ String
+}
+class PasswordHasher {
+  <<package-private>>
+  -int ITERATIONS$
+  -SecureRandom RANDOM$
+  ~encode(String password)$ Encoded
+  ~matches(String password, String hash, String salt)$ boolean
+  -derive(String password, byte[] salt)$ byte[]
+}
+class Encoded["PasswordHasher.Encoded"] {
+  <<record>>
+  String hash
+  String salt
+}
+class RuntimeException {
+  <<external Java>>
+}
+class ApiException {
+  -int status
+  -String code
+  +status() int
+  +code() String
+  +validation(String message)$ ApiException
+  +loginRequired()$ ApiException
+}
+class Error {
+  <<external JavaScript>>
+}
+class ApiError {
+  <<JavaScript>>
+  +String name
+  +String code
+  +Number status
+  +constructor(message, code, status)
+}
+RuntimeException <|-- ApiException
+Error <|-- ApiError
+BasicMemberService ..> MemoryLock : synchronized MONITOR
+BasicBoardService ..> MemoryLock : synchronized MONITOR
+InMemoryMemberDao ..> MemoryLock : synchronized MONITOR
+InMemoryBoardDao ..> MemoryLock : synchronized MONITOR
+BasicMemberService ..> Validation
+BasicBoardService ..> Validation
+BasicMemberService ..> PasswordHasher
+BasicMemberService ..> Encoded : reads hash / salt
+PasswordHasher ..> Encoded : declares / creates
+Validation ..> ApiException : throws
+BasicMemberService ..> ApiException : throws
+BasicBoardService ..> ApiException : throws
+ApiController ..> ApiException : throws / catches
+BoardController ..> ApiException : catches
+note for ApiError "Frontend/js/api.js; apiRequest() throws this error"
+note for MemoryLock "Services and DAOs share one monitor for consistent member / board operations"

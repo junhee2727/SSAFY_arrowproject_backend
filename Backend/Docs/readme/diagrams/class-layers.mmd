@@ -1,0 +1,90 @@
+classDiagram
+ direction TB
+ class ApiController {
+  <<abstract>>
+  #service(req, res)
+  #userId(req) String
+  #read(req, type)
+  #success(res, status, data)
+ }
+ class AuthController
+ class MemberController
+ class BoardController
+ class MemberService {
+  <<interface>>
+  +register(request) RecoveryResponse
+  +login(request) Authentication
+  +resetPassword(request) RecoveryResponse
+  +authenticatedProfile(id, version) MemberDto
+  +profile(id) MemberDto
+  +rename(id, request) MemberDto
+  +delete(id)
+ }
+ class BoardService {
+  <<interface>>
+  +search(page, type, keyword) Page
+  +detail(id, viewerId) BoardDto
+  +create(memberId, request) BoardDto
+  +update(id, memberId, request) BoardDto
+  +delete(id, memberId)
+ }
+ class BasicMemberService {
+  <<singleton>>
+  -MemberDao dao
+  +getService() BasicMemberService
+ }
+ class BasicBoardService {
+  <<singleton>>
+  -BoardDao dao
+  -MemberDao members
+  +getService() BasicBoardService
+ }
+ class MemberDao {
+  <<interface>>
+  +findById(id) Member
+  +findByEmail(email) Member
+  +insert(member)
+  +update(member)
+  +delete(id)
+ }
+ class BoardDao {
+  <<interface>>
+  +findById(id) Board
+  +findAll() List
+  +nextSequence() long
+  +insert(board)
+  +update(board)
+  +delete(id)
+  +deleteByAuthorId(authorId)
+ }
+ class InMemoryMemberDao {
+  <<singleton>>
+  -Map members
+ }
+ class InMemoryBoardDao {
+  <<singleton>>
+  -Map boards
+  -AtomicLong sequence
+ }
+ class PasswordHasher
+ class RecoveryCodes
+ class MemoryLock
+ ApiController <|-- AuthController
+ ApiController <|-- MemberController
+ ApiController <|-- BoardController
+ AuthController --> MemberService
+ MemberController --> MemberService
+ BoardController --> BoardService
+ MemberService <|.. BasicMemberService
+ BoardService <|.. BasicBoardService
+ BasicMemberService --> MemberDao
+ BasicMemberService ..> InMemoryBoardDao : 탈퇴 시 작성 글 삭제
+ BasicBoardService --> BoardDao
+ BasicBoardService --> MemberDao : 현재 작성자명 조회
+ MemberDao <|.. InMemoryMemberDao
+ BoardDao <|.. InMemoryBoardDao
+ BasicMemberService ..> PasswordHasher
+ BasicMemberService ..> RecoveryCodes
+ BasicMemberService ..> MemoryLock
+ BasicBoardService ..> MemoryLock
+ note for ApiController "HttpServlet 상속 · CORS · JSON · 세션 버전 검사"

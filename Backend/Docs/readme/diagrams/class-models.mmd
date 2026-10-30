@@ -1,0 +1,83 @@
+classDiagram
+ direction TB
+ class Member {
+  <<immutable>>
+  -String id
+  -String name
+  -String email
+  -String passwordHash
+  -String passwordSalt
+  -Instant createdAt
+  -String recoveryCodeHash
+  -long credentialVersion
+  +withName(name) Member
+  +withCredentials(hash, salt, recoveryHash) Member
+ }
+ class Board {
+  <<immutable>>
+  -String id
+  -long sequence
+  -String authorId
+  -String category
+  -String title
+  -String content
+  -Instant createdAt
+  -Instant updatedAt
+  +withContent(category, title, content, modifiedAt) Board
+ }
+ class MemberDto {
+  <<record>>
+  String id
+  String name
+  String email
+  String createdAt
+ }
+ class RecoveryResponse {
+  <<MemberDto nested record>>
+  String id
+  String name
+  String email
+  String createdAt
+  String recoveryCode
+ }
+ class PasswordResetRequest {
+  <<MemberDto nested record>>
+  String email
+  String recoveryCode
+  String password
+  String passwordConfirm
+ }
+ class Authentication {
+  <<MemberService nested record>>
+  MemberDto member
+  long credentialVersion
+ }
+ class BoardDto {
+  <<record>>
+  String id
+  long sequence
+  String category
+  String title
+  String content
+  String authorId
+  String authorName
+  String createdAt
+  String updatedAt
+  boolean canEdit
+  boolean canDelete
+ }
+ class BasicMemberService
+ class BasicBoardService
+ Board "0..*" --> "1" Member : authorId로 참조
+ BasicMemberService ..> Member : 저장·검증
+ BasicMemberService ..> MemberDto : 공개 필드로 변환
+ BasicMemberService ..> RecoveryResponse : 가입·재설정 응답 생성
+ BasicMemberService ..> PasswordResetRequest : 입력 검증
+ BasicMemberService ..> Authentication : 로그인 결과 생성
+ BasicBoardService ..> Board : 저장·검증
+ BasicBoardService ..> Member : 현재 작성자 조회
+ BasicBoardService ..> BoardDto : 최신 이름·권한 계산
+ MemberDto ..> PasswordResetRequest : 중첩 타입 선언
+ MemberDto ..> RecoveryResponse : 중첩 타입 선언
+ Authentication --> MemberDto : member
+ note for Member "DAO 내부 저장 객체 · 해시와 세션 버전은 공개 응답에서 제외"

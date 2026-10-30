@@ -1,0 +1,112 @@
+---
+title: EnjoyTrip — API request / response DTOs
+---
+classDiagram
+direction TB
+%% All API data types are records except the CommonDto namespace holder.
+%% Record components are shown without a visibility marker; generated accessors are omitted.
+%% Dotted 'declares nested type' edges mean lexical nesting, not object ownership.
+class MemberDto {
+  <<record>>
+  String id
+  String name
+  String email
+  String createdAt
+}
+class SignupRequest["MemberDto.SignupRequest"] {
+  <<record>>
+  String name
+  String email
+  String password
+  String passwordConfirm
+  Boolean terms
+  +toString() String
+}
+class LoginRequest["MemberDto.LoginRequest"] {
+  <<record>>
+  String email
+  String password
+  +toString() String
+}
+class UpdateRequest["MemberDto.UpdateRequest"] {
+  <<record>>
+  String name
+}
+class BoardDto {
+  <<record>>
+  String id
+  long sequence
+  String category
+  String title
+  String content
+  String authorId
+  String authorName
+  String createdAt
+  String updatedAt
+  boolean canEdit
+  boolean canDelete
+}
+class SaveRequest["BoardDto.SaveRequest"] {
+  <<record>>
+  String category
+  String title
+  String content
+}
+class Summary["BoardDto.Summary"] {
+  <<record>>
+  String id
+  long sequence
+  String category
+  String title
+  String authorId
+  String authorName
+  String createdAt
+  String updatedAt
+}
+class CommonDto {
+  <<utility>>
+}
+class Response["CommonDto.Response"] {
+  <<record>>
+  T data
+}
+class Page["CommonDto.Page"] {
+  <<record>>
+  List~T~ items
+  int page
+  int pageSize
+  long totalItems
+  int totalPages
+}
+class ErrorResponse["CommonDto.ErrorResponse"] {
+  <<record>>
+  ErrorBody error
+}
+class ErrorBody["CommonDto.ErrorBody"] {
+  <<record>>
+  String code
+  String message
+}
+MemberDto ..> SignupRequest : declares nested type
+MemberDto ..> LoginRequest : declares nested type
+MemberDto ..> UpdateRequest : declares nested type
+BoardDto ..> SaveRequest : declares nested type
+BoardDto ..> Summary : declares nested type
+CommonDto ..> Response : declares nested type
+CommonDto ..> Page : declares nested type
+CommonDto ..> ErrorResponse : declares nested type
+CommonDto ..> ErrorBody : declares nested type
+ErrorResponse --> ErrorBody : error
+BasicMemberService ..> SignupRequest : register input
+BasicMemberService ..> LoginRequest : login input
+BasicMemberService ..> UpdateRequest : rename input
+BasicMemberService ..> MemberDto : creates
+BasicBoardService ..> SaveRequest : create / update input
+BasicBoardService ..> BoardDto : creates detail
+BasicBoardService ..> Summary : creates list item
+BasicBoardService ..> Page : creates paged result
+ApiController ..> Response : success wrapper
+ApiController ..> ErrorResponse : error wrapper
+ApiController ..> ErrorBody : creates
+note for Response "Generic record Response<T>; data is the supplied API result"
+note for Page "Generic record Page<T>; board search uses Page<BoardDto.Summary>"

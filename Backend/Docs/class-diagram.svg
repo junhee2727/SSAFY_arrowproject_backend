@@ -1,0 +1,300 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2800" height="2360" viewBox="0 0 2800 2360">
+<defs>
+<marker id="tri" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L12,7 L1,13 Z" fill="white" stroke="#475569" stroke-width="2"/></marker>
+<marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#475569" stroke-width="2"/></marker>
+<style>text{font-family:'Apple SD Gothic Neo','Arial',sans-serif;fill:#1e293b} .title{font-size:46px;font-weight:700} .section{font-size:26px;font-weight:700} .name{font-size:23px;font-weight:700} .body{font-size:19px} .small{font-size:18px;fill:#64748b} .tag{font-size:16px;fill:#475569} .edge{fill:none;stroke:#475569;stroke-width:2.2;stroke-linejoin:round}</style>
+</defs><rect width="100%" height="100%" fill="#f4f7fb"/>
+<text x="60" y="77" class="title" text-anchor="start">EnjoyTrip  클래스 다이어그램</text>
+<text x="62" y="116" class="body" text-anchor="start">현재 구현 기준 · Servlet → Service → In-memory DAO · Java 클래스 / 인터페이스 / record 32개 + JavaScript 클래스 1개</text>
+<rect x="50" y="153" width="1470" height="2075" rx="20" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="1550" y="153" width="1200" height="1130" rx="20" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="1550" y="1305" width="1200" height="923" rx="20" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="80" y="196" class="section" text-anchor="start">01  핵심 클래스 관계</text>
+<text x="1580" y="196" class="section" text-anchor="start">02  요청·응답 DTO</text>
+<text x="1580" y="1348" class="section" text-anchor="start">03  공통 처리와 프런트엔드</text>
+<rect x="630" y="225" width="320" height="84" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M640,225 H940 Q950,225 950,235 V291 H630 V235 Q630,225 640,225 Z" fill="#e2e8f0"/>
+<text x="646" y="248" class="tag" text-anchor="start">external · Jakarta Servlet</text>
+<text x="646" y="274" class="name" text-anchor="start">HttpServlet</text>
+<rect x="100" y="355" width="350" height="127" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M110,355 H440 Q450,355 450,365 V421 H100 V365 Q100,355 110,355 Z" fill="#dbeafe"/>
+<text x="116" y="378" class="tag" text-anchor="start">/ , /index.html</text>
+<text x="116" y="404" class="name" text-anchor="start">HomeController</text>
+<path d="M100,441 H450" stroke="#e2e8f0"/>
+<text x="116" y="459" class="body" text-anchor="start"># doGet(req, res)</text>
+<rect x="610" y="355" width="420" height="181" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M620,355 H1020 Q1030,355 1030,365 V421 H610 V365 Q610,355 620,355 Z" fill="#dbeafe"/>
+<text x="626" y="378" class="tag" text-anchor="start">abstract</text>
+<text x="626" y="404" class="name" text-anchor="start">ApiController</text>
+<path d="M610,441 H1030" stroke="#e2e8f0"/>
+<text x="626" y="459" class="body" text-anchor="start"># service(req, res)</text>
+<text x="626" y="486" class="body" text-anchor="start"># handle(req, res) [abstract]</text>
+<text x="626" y="513" class="body" text-anchor="start"># read() / userId() / success()</text>
+<rect x="100" y="630" width="350" height="154" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M110,630 H440 Q450,630 450,640 V696 H100 V640 Q100,630 110,630 Z" fill="#dbeafe"/>
+<text x="116" y="653" class="tag" text-anchor="start">/api/auth/*</text>
+<text x="116" y="679" class="name" text-anchor="start">AuthController</text>
+<text x="116" y="723" class="body" text-anchor="start">− MemberService service</text>
+<path d="M100,743 H450" stroke="#e2e8f0"/>
+<text x="116" y="761" class="body" text-anchor="start"># handle(req, res)</text>
+<rect x="565" y="630" width="350" height="154" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M575,630 H905 Q915,630 915,640 V696 H565 V640 Q565,630 575,630 Z" fill="#dbeafe"/>
+<text x="581" y="653" class="tag" text-anchor="start">/api/members/*</text>
+<text x="581" y="679" class="name" text-anchor="start">MemberController</text>
+<text x="581" y="723" class="body" text-anchor="start">− MemberService service</text>
+<path d="M565,743 H915" stroke="#e2e8f0"/>
+<text x="581" y="761" class="body" text-anchor="start"># handle(req, res)</text>
+<rect x="1030" y="630" width="350" height="154" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M1040,630 H1370 Q1380,630 1380,640 V696 H1030 V640 Q1030,630 1040,630 Z" fill="#dbeafe"/>
+<text x="1046" y="653" class="tag" text-anchor="start">/api/posts/*</text>
+<text x="1046" y="679" class="name" text-anchor="start">BoardController</text>
+<text x="1046" y="723" class="body" text-anchor="start">− BoardService service</text>
+<path d="M1030,743 H1380" stroke="#e2e8f0"/>
+<text x="1046" y="761" class="body" text-anchor="start"># handle(req, res)</text>
+<rect x="220" y="910" width="450" height="235" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M230,910 H660 Q670,910 670,920 V976 H220 V920 Q220,910 230,910 Z" fill="#d1fae5"/>
+<text x="236" y="933" class="tag" text-anchor="start">«interface»</text>
+<text x="236" y="959" class="name" text-anchor="start">MemberService</text>
+<path d="M220,996 H670" stroke="#e2e8f0"/>
+<text x="236" y="1014" class="body" text-anchor="start">+ register(request) : MemberDto</text>
+<text x="236" y="1041" class="body" text-anchor="start">+ login(request) : MemberDto</text>
+<text x="236" y="1068" class="body" text-anchor="start">+ profile(id) : MemberDto</text>
+<text x="236" y="1095" class="body" text-anchor="start">+ rename(id, request) : MemberDto</text>
+<text x="236" y="1122" class="body" text-anchor="start">+ delete(id) : void</text>
+<rect x="930" y="910" width="450" height="235" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M940,910 H1370 Q1380,910 1380,920 V976 H930 V920 Q930,910 940,910 Z" fill="#d1fae5"/>
+<text x="946" y="933" class="tag" text-anchor="start">«interface»</text>
+<text x="946" y="959" class="name" text-anchor="start">BoardService</text>
+<path d="M930,996 H1380" stroke="#e2e8f0"/>
+<text x="946" y="1014" class="body" text-anchor="start">+ search(...) : Page&lt;Summary&gt;</text>
+<text x="946" y="1041" class="body" text-anchor="start">+ detail(id, viewerId) : BoardDto</text>
+<text x="946" y="1068" class="body" text-anchor="start">+ create(memberId, request) : BoardDto</text>
+<text x="946" y="1095" class="body" text-anchor="start">+ update(id, memberId, request) : BoardDto</text>
+<text x="946" y="1122" class="body" text-anchor="start">+ delete(id, memberId) : void</text>
+<rect x="220" y="1235" width="450" height="154" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M230,1235 H660 Q670,1235 670,1245 V1301 H220 V1245 Q220,1235 230,1235 Z" fill="#d1fae5"/>
+<text x="236" y="1258" class="tag" text-anchor="start">«singleton»</text>
+<text x="236" y="1284" class="name" text-anchor="start">BasicMemberService</text>
+<text x="236" y="1328" class="body" text-anchor="start">− MemberDao dao</text>
+<path d="M220,1348 H670" stroke="#e2e8f0"/>
+<text x="236" y="1366" class="body" text-anchor="start">+ getService() : BasicMemberService</text>
+<rect x="930" y="1235" width="450" height="181" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M940,1235 H1370 Q1380,1235 1380,1245 V1301 H930 V1245 Q930,1235 940,1235 Z" fill="#d1fae5"/>
+<text x="946" y="1258" class="tag" text-anchor="start">«singleton»</text>
+<text x="946" y="1284" class="name" text-anchor="start">BasicBoardService</text>
+<text x="946" y="1328" class="body" text-anchor="start">− BoardDao dao</text>
+<text x="946" y="1355" class="body" text-anchor="start">− MemberDao members</text>
+<path d="M930,1375 H1380" stroke="#e2e8f0"/>
+<text x="946" y="1393" class="body" text-anchor="start">+ getService() : BasicBoardService</text>
+<rect x="220" y="1515" width="450" height="181" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M230,1515 H660 Q670,1515 670,1525 V1581 H220 V1525 Q220,1515 230,1515 Z" fill="#ffedd5"/>
+<text x="236" y="1538" class="tag" text-anchor="start">«interface»</text>
+<text x="236" y="1564" class="name" text-anchor="start">MemberDao</text>
+<path d="M220,1601 H670" stroke="#e2e8f0"/>
+<text x="236" y="1619" class="body" text-anchor="start">+ findById(id) / findByEmail(email)</text>
+<text x="236" y="1646" class="body" text-anchor="start">+ insert(member) / update(member)</text>
+<text x="236" y="1673" class="body" text-anchor="start">+ delete(id)</text>
+<rect x="930" y="1515" width="450" height="208" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M940,1515 H1370 Q1380,1515 1380,1525 V1581 H930 V1525 Q930,1515 940,1515 Z" fill="#ffedd5"/>
+<text x="946" y="1538" class="tag" text-anchor="start">«interface»</text>
+<text x="946" y="1564" class="name" text-anchor="start">BoardDao</text>
+<path d="M930,1601 H1380" stroke="#e2e8f0"/>
+<text x="946" y="1619" class="body" text-anchor="start">+ findById(id) / findAll()</text>
+<text x="946" y="1646" class="body" text-anchor="start">+ insert(board) / update(board)</text>
+<text x="946" y="1673" class="body" text-anchor="start">+ delete(id) / deleteByAuthorId(id)</text>
+<text x="946" y="1700" class="body" text-anchor="start">+ nextSequence() : long</text>
+<rect x="220" y="1770" width="450" height="154" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M230,1770 H660 Q670,1770 670,1780 V1836 H220 V1780 Q220,1770 230,1770 Z" fill="#ffedd5"/>
+<text x="236" y="1793" class="tag" text-anchor="start">«singleton»</text>
+<text x="236" y="1819" class="name" text-anchor="start">InMemoryMemberDao</text>
+<text x="236" y="1863" class="body" text-anchor="start">− Map&lt;String, Member&gt; members</text>
+<path d="M220,1883 H670" stroke="#e2e8f0"/>
+<text x="236" y="1901" class="body" text-anchor="start">+ getInstance() : InMemoryMemberDao</text>
+<rect x="930" y="1770" width="450" height="181" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M940,1770 H1370 Q1380,1770 1380,1780 V1836 H930 V1780 Q930,1770 940,1770 Z" fill="#ffedd5"/>
+<text x="946" y="1793" class="tag" text-anchor="start">«singleton»</text>
+<text x="946" y="1819" class="name" text-anchor="start">InMemoryBoardDao</text>
+<text x="946" y="1863" class="body" text-anchor="start">− Map&lt;String, Board&gt; boards</text>
+<text x="946" y="1890" class="body" text-anchor="start">− AtomicLong sequence</text>
+<path d="M930,1910 H1380" stroke="#e2e8f0"/>
+<text x="946" y="1928" class="body" text-anchor="start">+ getInstance() : InMemoryBoardDao</text>
+<rect x="220" y="2000" width="450" height="208" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M230,2000 H660 Q670,2000 670,2010 V2066 H220 V2010 Q220,2000 230,2000 Z" fill="#ede9fe"/>
+<text x="236" y="2023" class="tag" text-anchor="start">immutable · model.dto</text>
+<text x="236" y="2049" class="name" text-anchor="start">Member</text>
+<text x="236" y="2093" class="body" text-anchor="start">id, name, email : String</text>
+<text x="236" y="2120" class="body" text-anchor="start">passwordHash, passwordSalt : String</text>
+<text x="236" y="2147" class="body" text-anchor="start">createdAt : Instant</text>
+<path d="M220,2167 H670" stroke="#e2e8f0"/>
+<text x="236" y="2185" class="body" text-anchor="start">+ withName(name) : Member</text>
+<rect x="930" y="2000" width="450" height="208" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M940,2000 H1370 Q1380,2000 1380,2010 V2066 H930 V2010 Q930,2000 940,2000 Z" fill="#ede9fe"/>
+<text x="946" y="2023" class="tag" text-anchor="start">immutable · model.dto</text>
+<text x="946" y="2049" class="name" text-anchor="start">Board</text>
+<text x="946" y="2093" class="body" text-anchor="start">id, authorId, category, title, content</text>
+<text x="946" y="2120" class="body" text-anchor="start">sequence : long</text>
+<text x="946" y="2147" class="body" text-anchor="start">createdAt, updatedAt : Instant</text>
+<path d="M930,2167 H1380" stroke="#e2e8f0"/>
+<text x="946" y="2185" class="body" text-anchor="start">+ withContent(...) : Board</text>
+<polyline points="820.0,355 790.0,309" class="edge" marker-end="url(#tri)"/>
+<polyline points="275.0,355 275,267 630,267.0" class="edge" marker-end="url(#tri)"/>
+<polyline points="275.0,630 275.0,585 820,585 820.0,536" class="edge" marker-end="url(#tri)"/>
+<polyline points="740.0,630 740.0,585 820,585 820.0,536" class="edge" marker-end="url(#tri)"/>
+<polyline points="1205.0,630 1205.0,585 820,585 820.0,536" class="edge" marker-end="url(#tri)"/>
+<polyline points="275.0,784 275,850 390,850 445.0,910" class="edge" marker-end="url(#arrow)"/>
+<polyline points="740.0,784 740,865 500,865 445.0,910" class="edge" marker-end="url(#arrow)"/>
+<polyline points="1205.0,784 1205,850 1155,850 1155.0,910" class="edge" marker-end="url(#arrow)"/>
+<polyline points="445.0,1235 445.0,1145" class="edge" stroke-dasharray="8 6" marker-end="url(#tri)"/>
+<polyline points="1155.0,1235 1155.0,1145" class="edge" stroke-dasharray="8 6" marker-end="url(#tri)"/>
+<polyline points="445.0,1389 445.0,1515" class="edge" marker-end="url(#arrow)"/>
+<rect x="453" y="1431" width="50" height="27" rx="4" fill="#f4f7fb" stroke="none"/>
+<text x="458" y="1450" class="small" text-anchor="start">dao</text>
+<polyline points="1155.0,1416 1155.0,1515" class="edge" marker-end="url(#arrow)"/>
+<rect x="1163" y="1445" width="50" height="27" rx="4" fill="#f4f7fb" stroke="none"/>
+<text x="1168" y="1464" class="small" text-anchor="start">dao</text>
+<polyline points="930,1325.5 800,1330 800,1610 670,1605.5" class="edge" marker-end="url(#arrow)"/>
+<rect x="808" y="1471" width="90" height="27" rx="4" fill="#f4f7fb" stroke="none"/>
+<text x="813" y="1490" class="small" text-anchor="start">members</text>
+<polyline points="445.0,1770 445.0,1696" class="edge" stroke-dasharray="8 6" marker-end="url(#tri)"/>
+<polyline points="1155.0,1770 1155.0,1723" class="edge" stroke-dasharray="8 6" marker-end="url(#tri)"/>
+<polyline points="445.0,1924 445.0,2000" class="edge" marker-end="url(#arrow)"/>
+<rect x="455" y="1955" width="100" height="27" rx="4" fill="#f4f7fb" stroke="none"/>
+<text x="460" y="1974" class="small" text-anchor="start">1 → 0..*</text>
+<polyline points="1155.0,1951 1155.0,2000" class="edge" marker-end="url(#arrow)"/>
+<rect x="1165" y="1955" width="100" height="27" rx="4" fill="#f4f7fb" stroke="none"/>
+<text x="1170" y="1974" class="small" text-anchor="start">1 → 0..*</text>
+<polyline points="610,445.5 540,445.5 540,560 70,560 70,1318 220,1312.0" class="edge" stroke-dasharray="8 6" marker-end="url(#arrow)"/>
+<rect x="73" y="1171" width="180" height="27" rx="4" fill="#f4f7fb" stroke="none"/>
+<text x="78" y="1190" class="small" text-anchor="start">userId → profile</text>
+<polyline points="670,1312.0 730,1318 730,1865 930,1860.5" class="edge" stroke-dasharray="8 6" marker-end="url(#arrow)"/>
+<rect x="735" y="1716" width="130" height="27" rx="4" fill="#f4f7fb" stroke="none"/>
+<text x="740" y="1735" class="small" text-anchor="start">탈퇴 → 작성글 삭제</text>
+<rect x="1580" y="230" width="550" height="111" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M1590,230 H2120 Q2130,230 2130,240 V296 H1580 V240 Q1580,230 1590,230 Z" fill="#ede9fe"/>
+<text x="1596" y="253" class="tag" text-anchor="start">record · 회원 응답</text>
+<text x="1596" y="279" class="name" text-anchor="start">MemberDto</text>
+<text x="1596" y="323" class="body" text-anchor="start">id, name, email, createdAt : String</text>
+<rect x="1580" y="370" width="550" height="138" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M1590,370 H2120 Q2130,370 2130,380 V436 H1580 V380 Q1580,370 1590,370 Z" fill="#ede9fe"/>
+<text x="1596" y="393" class="tag" text-anchor="start">nested record · 가입 요청</text>
+<text x="1596" y="419" class="name" text-anchor="start">MemberDto.SignupRequest</text>
+<text x="1596" y="463" class="body" text-anchor="start">name, email, password : String</text>
+<text x="1596" y="490" class="body" text-anchor="start">passwordConfirm : String; terms : Boolean</text>
+<rect x="1580" y="535" width="550" height="111" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M1590,535 H2120 Q2130,535 2130,545 V601 H1580 V545 Q1580,535 1590,535 Z" fill="#ede9fe"/>
+<text x="1596" y="558" class="tag" text-anchor="start">nested record · 로그인 요청</text>
+<text x="1596" y="584" class="name" text-anchor="start">MemberDto.LoginRequest</text>
+<text x="1596" y="628" class="body" text-anchor="start">email, password : String</text>
+<rect x="1580" y="675" width="550" height="111" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M1590,675 H2120 Q2130,675 2130,685 V741 H1580 V685 Q1580,675 1590,675 Z" fill="#ede9fe"/>
+<text x="1596" y="698" class="tag" text-anchor="start">nested record · 이름 수정 요청</text>
+<text x="1596" y="724" class="name" text-anchor="start">MemberDto.UpdateRequest</text>
+<text x="1596" y="768" class="body" text-anchor="start">name : String</text>
+<rect x="2160" y="230" width="560" height="219" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M2170,230 H2710 Q2720,230 2720,240 V296 H2160 V240 Q2160,230 2170,230 Z" fill="#ede9fe"/>
+<text x="2176" y="253" class="tag" text-anchor="start">record · 게시글 상세 응답</text>
+<text x="2176" y="279" class="name" text-anchor="start">BoardDto</text>
+<text x="2176" y="323" class="body" text-anchor="start">id, category, title, content : String</text>
+<text x="2176" y="350" class="body" text-anchor="start">sequence : long</text>
+<text x="2176" y="377" class="body" text-anchor="start">authorId, authorName : String</text>
+<text x="2176" y="404" class="body" text-anchor="start">createdAt, updatedAt : String</text>
+<text x="2176" y="431" class="body" text-anchor="start">canEdit, canDelete : boolean</text>
+<rect x="2160" y="480" width="560" height="165" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M2170,480 H2710 Q2720,480 2720,490 V546 H2160 V490 Q2160,480 2170,480 Z" fill="#ede9fe"/>
+<text x="2176" y="503" class="tag" text-anchor="start">nested record · 게시글 목록 항목</text>
+<text x="2176" y="529" class="name" text-anchor="start">BoardDto.Summary</text>
+<text x="2176" y="573" class="body" text-anchor="start">id, category, title : String; sequence : long</text>
+<text x="2176" y="600" class="body" text-anchor="start">authorId, authorName : String</text>
+<text x="2176" y="627" class="body" text-anchor="start">createdAt, updatedAt : String</text>
+<rect x="2160" y="675" width="560" height="111" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M2170,675 H2710 Q2720,675 2720,685 V741 H2160 V685 Q2160,675 2170,675 Z" fill="#ede9fe"/>
+<text x="2176" y="698" class="tag" text-anchor="start">nested record · 등록 / 수정 요청</text>
+<text x="2176" y="724" class="name" text-anchor="start">BoardDto.SaveRequest</text>
+<text x="2176" y="768" class="body" text-anchor="start">category, title, content : String</text>
+<text x="1595" y="830" class="small" text-anchor="start">BasicMemberService → MemberDto     /     BasicBoardService → BoardDto, Summary, Page</text>
+<rect x="1580" y="860" width="1140" height="84" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M1590,860 H2710 Q2720,860 2720,870 V926 H1580 V870 Q1580,860 1590,860 Z" fill="#e2e8f0"/>
+<text x="1596" y="883" class="tag" text-anchor="start">utility · 아래 4개 nested record를 선언하는 클래스</text>
+<text x="1596" y="909" class="name" text-anchor="start">CommonDto</text>
+<rect x="1580" y="970" width="550" height="111" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M1590,970 H2120 Q2130,970 2130,980 V1036 H1580 V980 Q1580,970 1590,970 Z" fill="#ede9fe"/>
+<text x="1596" y="993" class="tag" text-anchor="start">CommonDto · 성공 응답</text>
+<text x="1596" y="1019" class="name" text-anchor="start">Response&lt;T&gt;</text>
+<text x="1596" y="1063" class="body" text-anchor="start">data : T</text>
+<rect x="2160" y="970" width="560" height="138" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M2170,970 H2710 Q2720,970 2720,980 V1036 H2160 V980 Q2160,970 2170,970 Z" fill="#ede9fe"/>
+<text x="2176" y="993" class="tag" text-anchor="start">CommonDto · 페이지 응답</text>
+<text x="2176" y="1019" class="name" text-anchor="start">Page&lt;T&gt;</text>
+<text x="2176" y="1063" class="body" text-anchor="start">items : List&lt;T&gt;; page, pageSize : int</text>
+<text x="2176" y="1090" class="body" text-anchor="start">totalItems : long; totalPages : int</text>
+<rect x="1580" y="1110" width="550" height="111" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M1590,1110 H2120 Q2130,1110 2130,1120 V1176 H1580 V1120 Q1580,1110 1590,1110 Z" fill="#ede9fe"/>
+<text x="1596" y="1133" class="tag" text-anchor="start">CommonDto · 실패 응답</text>
+<text x="1596" y="1159" class="name" text-anchor="start">ErrorResponse</text>
+<text x="1596" y="1203" class="body" text-anchor="start">error : ErrorBody</text>
+<rect x="2160" y="1137" width="560" height="111" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M2170,1137 H2710 Q2720,1137 2720,1147 V1203 H2160 V1147 Q2160,1137 2170,1137 Z" fill="#ede9fe"/>
+<text x="2176" y="1160" class="tag" text-anchor="start">CommonDto · 오류 내용</text>
+<text x="2176" y="1186" class="name" text-anchor="start">ErrorBody</text>
+<text x="2176" y="1230" class="body" text-anchor="start">code, message : String</text>
+<polyline points="2130,1165.5 2160,1192.5" class="edge" marker-end="url(#arrow)"/>
+<rect x="1580" y="1385" width="550" height="111" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M1590,1385 H2120 Q2130,1385 2130,1395 V1451 H1580 V1395 Q1580,1385 1590,1385 Z" fill="#fef3c7"/>
+<text x="1596" y="1408" class="tag" text-anchor="start">utility</text>
+<text x="1596" y="1434" class="name" text-anchor="start">MemoryLock</text>
+<text x="1596" y="1478" class="body" text-anchor="start">+ static final Object MONITOR</text>
+<rect x="2160" y="1385" width="560" height="154" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M2170,1385 H2710 Q2720,1385 2720,1395 V1451 H2160 V1395 Q2160,1385 2170,1385 Z" fill="#fef3c7"/>
+<text x="2176" y="1408" class="tag" text-anchor="start">package-private · utility</text>
+<text x="2176" y="1434" class="name" text-anchor="start">Validation</text>
+<path d="M2160,1471 H2720" stroke="#e2e8f0"/>
+<text x="2176" y="1489" class="body" text-anchor="start">~ static text(value, min, max, label)</text>
+<text x="2176" y="1516" class="body" text-anchor="start">~ static name(value) / email(value)</text>
+<text x="1595" y="1532" class="small" text-anchor="start">두 Service와 두 DAO가 같은 MONITOR로 동기화</text>
+<text x="2175" y="1560" class="small" text-anchor="start">두 Service에서 입력 검증에 사용</text>
+<rect x="1580" y="1590" width="550" height="154" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M1590,1590 H2120 Q2130,1590 2130,1600 V1656 H1580 V1600 Q1580,1590 1590,1590 Z" fill="#fef3c7"/>
+<text x="1596" y="1613" class="tag" text-anchor="start">package-private · utility</text>
+<text x="1596" y="1639" class="name" text-anchor="start">PasswordHasher</text>
+<path d="M1580,1676 H2130" stroke="#e2e8f0"/>
+<text x="1596" y="1694" class="body" text-anchor="start">~ static encode(password) : Encoded</text>
+<text x="1596" y="1721" class="body" text-anchor="start">~ static matches(password, hash, salt)</text>
+<rect x="2160" y="1590" width="560" height="111" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M2170,1590 H2710 Q2720,1590 2720,1600 V1656 H2160 V1600 Q2160,1590 2170,1590 Z" fill="#fef3c7"/>
+<text x="2176" y="1613" class="tag" text-anchor="start">nested record</text>
+<text x="2176" y="1639" class="name" text-anchor="start">PasswordHasher.Encoded</text>
+<text x="2176" y="1683" class="body" text-anchor="start">hash, salt : String</text>
+<polyline points="2130,1667.0 2160,1645.5" class="edge" stroke-dasharray="8 6" marker-end="url(#arrow)"/>
+<text x="1595" y="1770" class="small" text-anchor="start">BasicMemberService에서 비밀번호 해시 생성 및 검증</text>
+<rect x="1580" y="1805" width="550" height="181" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M1590,1805 H2120 Q2130,1805 2130,1815 V1871 H1580 V1815 Q1580,1805 1590,1805 Z" fill="#ffe4e6"/>
+<text x="1596" y="1828" class="tag" text-anchor="start">extends RuntimeException</text>
+<text x="1596" y="1854" class="name" text-anchor="start">ApiException</text>
+<text x="1596" y="1898" class="body" text-anchor="start">− int status; − String code</text>
+<path d="M1580,1918 H2130" stroke="#e2e8f0"/>
+<text x="1596" y="1936" class="body" text-anchor="start">+ status() / code()</text>
+<text x="1596" y="1963" class="body" text-anchor="start">+ static validation() / loginRequired()</text>
+<rect x="2160" y="1805" width="560" height="154" rx="10" fill="white" stroke="#cbd5e1"/>
+<path d="M2170,1805 H2710 Q2720,1805 2720,1815 V1871 H2160 V1815 Q2160,1805 2170,1805 Z" fill="#ffe4e6"/>
+<text x="2176" y="1828" class="tag" text-anchor="start">JavaScript · extends Error</text>
+<text x="2176" y="1854" class="name" text-anchor="start">ApiError</text>
+<text x="2176" y="1898" class="body" text-anchor="start">+ name, code : String; + status : Number</text>
+<path d="M2160,1918 H2720" stroke="#e2e8f0"/>
+<text x="2176" y="1936" class="body" text-anchor="start">+ constructor(message, code, status)</text>
+<text x="1595" y="2045" class="small" text-anchor="start">Service·Validation에서 발생 → ApiController에서 응답 변환</text>
+<text x="2175" y="2020" class="small" text-anchor="start">Frontend/js/api.js의 apiRequest()가 발생</text>
+<rect x="1580" y="2080" width="1140" height="118" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>
+<text x="1600" y="2112" class="name" text-anchor="start">읽는 방법</text>
+<text x="1600" y="2146" class="body" text-anchor="start">Member와 Board는 불변 저장 객체, API DTO는 별도 record입니다.</text>
+<text x="1600" y="2177" class="body" text-anchor="start">Board.authorId는 Member.id를 저장하며 Member 객체를 직접 보유하지 않습니다.</text>
+<polyline points="70,2275 155,2275" class="edge" marker-end="url(#tri)"/>
+<text x="170" y="2282" class="body" text-anchor="start">상속</text>
+<polyline points="290,2275 375,2275" class="edge" stroke-dasharray="8 6" marker-end="url(#tri)"/>
+<text x="390" y="2282" class="body" text-anchor="start">인터페이스 구현</text>
+<polyline points="620,2275 705,2275" class="edge" marker-end="url(#arrow)"/>
+<text x="720" y="2282" class="body" text-anchor="start">필드 참조 / 저장</text>
+<polyline points="960,2275 1045,2275" class="edge" stroke-dasharray="8 6" marker-end="url(#arrow)"/>
+<text x="1060" y="2282" class="body" text-anchor="start">호출 의존</text>
+<text x="1450" y="2282" class="body" text-anchor="start">+ public   − private   # protected   ~ package-private</text>
+<text x="65" y="2326" class="small" text-anchor="start">가독성을 위해 생성자·getter·일부 인자/타입·싱글턴 초기화 및 DTO/유틸 의존선은 생략했습니다. 상세 시그니처와 관계는 class-diagram*.mmd를 참고하세요.</text>
+</svg>

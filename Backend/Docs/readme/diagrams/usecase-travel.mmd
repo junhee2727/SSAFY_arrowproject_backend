@@ -1,0 +1,32 @@
+flowchart LR
+  Visitor["«actor» 일반 사용자"]
+  Tour["«external» 한국관광공사"]
+  Kakao["«external» Kakao Maps"]
+  Weather["«external» 기상청"]
+  Route["«external» Kakao Mobility"]
+  subgraph APP["EnjoyTrip 관광·여행 계획"]
+    direction TB
+    Search(["지역 · 분류별 관광정보 조회"])
+    Detail(["관광지 상세 · 사진 조회"])
+    Current(["관광지 현재 날씨 조회"])
+    Plan(["여행 계획 생성 · 조회 · 삭제"])
+    Order(["장소 추가 · 삭제 · 방문 순서 변경 · 잠금"])
+    Optimize(["직선거리 기준 방문 순서 최적화"])
+    Drive(["자동차 경로 표시"])
+  end
+  Visitor --- Search
+  Visitor --- Detail
+  Visitor --- Current
+  Visitor --- Plan
+  Visitor --- Order
+  Visitor --- Optimize
+  Visitor --- Drive
+  Search --- Tour
+  Search --- Kakao
+  Detail --- Tour
+  Current --- Weather
+  Drive --- Route
+  classDef actor fill:#f1f5f9,stroke:#64748b,color:#0f172a
+  classDef usecase fill:#f5f3ff,stroke:#8b5cf6,color:#0f172a
+  class Visitor,Tour,Kakao,Weather,Route actor
+  class Search,Detail,Current,Plan,Order,Optimize,Drive usecase

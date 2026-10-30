@@ -1,0 +1,146 @@
+---
+title: EnjoyTrip — Controller / Service / DAO
+---
+classDiagram
+direction TB
+%% Current production source. Accessors, constructors and utility dependencies are omitted.
+%% See class-diagram-dto.mmd and class-diagram-support.mmd for additional types.
+class HttpServlet {
+  <<external>>
+}
+class ApiController {
+  <<abstract>>
+  -JsonMapper JSON$
+  #service(req, res) void
+  #handle(req, res)* void
+  #read(req, type) T
+  #userId(req) String
+  #success(res, status, data) void
+  #methodNotAllowed(res, allowed) void
+  #notFound() void
+}
+class HomeController {
+  #doGet(req, res) void
+}
+class AuthController {
+  -MemberService service
+  #handle(req, res) void
+}
+class MemberController {
+  -MemberService service
+  #handle(req, res) void
+}
+class BoardController {
+  -BoardService service
+  #handle(req, res) void
+}
+class MemberService {
+  <<interface>>
+  +register(SignupRequest request) MemberDto
+  +login(LoginRequest request) MemberDto
+  +profile(String id) MemberDto
+  +rename(String id, UpdateRequest request) MemberDto
+  +delete(String id) void
+}
+class BoardService {
+  <<interface>>
+  +search(String page, String type, String keyword) Page~BoardDto.Summary~
+  +detail(String id, String viewerId) BoardDto
+  +create(String memberId, SaveRequest request) BoardDto
+  +update(String id, String memberId, SaveRequest request) BoardDto
+  +delete(String id, String memberId) void
+}
+class BasicMemberService {
+  <<singleton>>
+  -MemberDao dao
+  +getService()$ BasicMemberService
+}
+class BasicBoardService {
+  <<singleton>>
+  -BoardDao dao
+  -MemberDao members
+  -int PAGE_SIZE$
+  +getService()$ BasicBoardService
+}
+class MemberDao {
+  <<interface>>
+  +findById(String id) Member
+  +findByEmail(String email) Member
+  +insert(Member member) void
+  +update(Member member) void
+  +delete(String id) void
+}
+class BoardDao {
+  <<interface>>
+  +findById(String id) Board
+  +findAll() List~Board~
+  +nextSequence() long
+  +insert(Board board) void
+  +update(Board board) void
+  +delete(String id) void
+  +deleteByAuthorId(String authorId) void
+}
+class InMemoryMemberDao {
+  <<singleton>>
+  -Map members
+  +getInstance()$ InMemoryMemberDao
+}
+class InMemoryBoardDao {
+  <<singleton>>
+  -Map boards
+  -AtomicLong sequence
+  +getInstance()$ InMemoryBoardDao
+}
+class Member {
+  <<immutable>>
+  -String id
+  -String name
+  -String email
+  -String passwordHash
+  -String passwordSalt
+  -Instant createdAt
+  +withName(String name) Member
+}
+class Board {
+  <<immutable>>
+  -String id
+  -long sequence
+  -String authorId
+  -String category
+  -String title
+  -String content
+  -Instant createdAt
+  -Instant updatedAt
+  +withContent(String category, String title, String content, Instant modifiedAt) Board
+}
+HttpServlet <|-- ApiController
+HttpServlet <|-- HomeController
+ApiController <|-- AuthController
+ApiController <|-- MemberController
+ApiController <|-- BoardController
+AuthController --> MemberService : service
+MemberController --> MemberService : service
+BoardController --> BoardService : service
+AuthController ..> BasicMemberService : getService
+MemberController ..> BasicMemberService : getService
+BoardController ..> BasicBoardService : getService
+ApiController ..> BasicMemberService : userId / profile
+MemberService <|.. BasicMemberService
+BoardService <|.. BasicBoardService
+BasicMemberService --> MemberDao : dao
+BasicMemberService ..> InMemoryMemberDao : getInstance
+BasicMemberService ..> InMemoryBoardDao : deleteByAuthorId
+BasicBoardService --> BoardDao : dao
+BasicBoardService --> MemberDao : members
+BasicBoardService ..> InMemoryBoardDao : getInstance
+BasicBoardService ..> InMemoryMemberDao : getInstance
+MemberDao <|.. InMemoryMemberDao
+BoardDao <|.. InMemoryBoardDao
+InMemoryMemberDao "1" --> "0..*" Member : stores
+InMemoryBoardDao "1" --> "0..*" Board : stores
+MemberDao ..> Member : parameter / return type
+BoardDao ..> Board : parameter / return type
+BasicMemberService ..> Member : creates / replaces
+BasicBoardService ..> Board : creates / replaces
+BasicBoardService ..> Member : author lookup
+note for Board "authorId = Member.id (ID reference, not an object field)"

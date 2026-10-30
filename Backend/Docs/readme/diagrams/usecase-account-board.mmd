@@ -1,0 +1,29 @@
+flowchart LR
+  Guest["«actor» 비회원"]
+  Member["«actor» 로그인 회원"]
+  subgraph APP["EnjoyTrip 회원·게시판"]
+    direction TB
+    Signup(["회원가입 · 복구코드 발급"])
+    Login(["로그인"])
+    Reset(["복구코드로 비밀번호 재설정"])
+    Read(["게시글 검색 · 목록 · 상세 조회"])
+    Profile(["내 정보 조회 · 이름 수정"])
+    Logout(["로그아웃"])
+    Withdraw(["회원 탈퇴 · 작성 글 삭제"])
+    Create(["게시글 등록"])
+    Manage(["내 게시글 수정 · 삭제"])
+  end
+  Guest --- Signup
+  Guest --- Login
+  Guest --- Reset
+  Guest --- Read
+  Member --- Read
+  Member --- Profile
+  Member --- Logout
+  Member --- Withdraw
+  Member --- Create
+  Member --- Manage
+  classDef actor fill:#f1f5f9,stroke:#64748b,color:#0f172a
+  classDef usecase fill:#eff6ff,stroke:#3b82f6,color:#0f172a
+  class Guest,Member actor
+  class Signup,Login,Reset,Read,Profile,Logout,Withdraw,Create,Manage usecase
