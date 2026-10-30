@@ -1,0 +1,447 @@
+/* Bootstrap 컴포넌트에 Enjoy Trip의 색상·타이포그래피·간격을 적용합니다. */
+:root {
+  color-scheme: light;
+  --blue: #3182f6;
+  --blue-dark: #2272eb;
+  --blue-light: #e8f3ff;
+  --page-background: #f2f4f6;
+  --field-background: #f9fafb;
+  --white: #fff;
+  --text: #191f28;
+  --text-medium: #333d4b;
+  --text-secondary: #6b7684;
+  --text-muted: #8b95a1;
+  --border: #e5e8eb;
+
+  --bs-primary: var(--blue);
+  --bs-primary-rgb: 49, 130, 246;
+  --bs-body-font-family: "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --bs-body-font-size: 14px;
+  --bs-body-line-height: 1.5;
+  --bs-body-color: var(--text);
+  --bs-body-bg: var(--page-background);
+  --bs-border-color: var(--border);
+  --bs-link-color: var(--text);
+  --bs-link-hover-color: var(--blue-dark);
+}
+
+body { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; -webkit-font-smoothing: antialiased; }
+button, a, select { -webkit-tap-highlight-color: transparent; }
+a { text-decoration: none; }
+p, h1, h2 { margin: 0; }
+/* JS의 hidden 토글이 Bootstrap의 d-flex/d-grid 유틸리티보다 우선합니다. */
+[hidden] { display: none !important; }
+
+.map-main { min-width: 0; min-height: 0; }
+.icon-library { position: absolute; width: 0; height: 0; overflow: hidden; }
+.icon { width: 20px; height: 20px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.skip-link { position: fixed; top: 12px; left: 12px; z-index: 1050; padding: 12px 16px; border-radius: 12px; background: var(--white); color: var(--blue-dark); }
+a:focus-visible, .btn:focus-visible, .btn-close:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; box-shadow: none; }
+
+.site-header { height: 68px; background: var(--white); }
+.header-inner { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid var(--border); }
+.brand { display: inline-flex; flex: 0 0 auto; align-items: center; margin-left: 24px; }
+.brand-logo-crop { position: relative; display: block; overflow: hidden; width: 132px; height: 44px; }
+.brand-logo { position: absolute; width: 160px; max-width: none; height: auto; transform: translate(-15px, -29px); }
+.community-nav { display: none; align-items: center; gap: 4px; margin-left: auto; margin-right: 12px; }
+.community-nav-link { padding: 9px 14px; color: var(--text-secondary); font-size: 14px; font-weight: 600; white-space: nowrap; transition: color .15s; }
+.community-nav-link:hover { color: var(--blue-dark); }
+.map-page .nav-map,
+.notice-page .nav-notice,
+.free-board-page .nav-free-board { color: var(--blue-dark); }
+.header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 24px; min-width: 0; }
+.page-tag { display: none; width: 143px; padding: 8px 16px; border-radius: 24px; color: var(--blue-dark); background: var(--blue-light); font-size: 13px; font-weight: 600; text-align: center; }
+.auth-nav, .auth-guest-actions, .auth-user-menu { display: flex; align-items: center; }
+.auth-guest-actions, .auth-user-menu { gap: 8px; }
+.auth-nav .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 9px 16px; border: 1px solid transparent; border-radius: 12px; font-size: 14px; font-weight: 600; line-height: 1.5; white-space: nowrap; transition: background-color .15s, border-color .15s, color .15s, transform .15s; }
+.auth-nav :is(.login-link, .logout-link, .my-page-link) { border-color: var(--border); background: var(--white); color: var(--text-medium); }
+.auth-nav :is(.login-link, .logout-link, .my-page-link):hover { border-color: #b0b8c1; background: var(--field-background); color: var(--text); }
+.my-page .my-page-link { border-color: var(--blue); background: var(--blue-light); color: var(--blue-dark); }
+.auth-nav .signup-link { border-color: var(--blue); background: var(--blue); color: var(--white); }
+.auth-nav .signup-link:hover { border-color: var(--blue-dark); background: var(--blue-dark); color: var(--white); }
+.auth-nav .btn:active { transform: scale(.97); }
+.user-greeting { display: flex; align-items: baseline; min-width: 0; margin: 0; color: var(--text-secondary); font-size: 14px; white-space: nowrap; }
+.user-greeting strong { display: inline-block; overflow: hidden; max-width: 120px; margin-left: 4px; color: var(--blue-dark); font-weight: 700; text-overflow: ellipsis; vertical-align: bottom; }
+
+.explorer {
+  --bs-card-border-color: var(--border);
+  --bs-card-bg: var(--white);
+  --bs-card-cap-bg: transparent;
+  min-height: 0;
+  overflow: hidden;
+}
+.explorer-footer, #search-feedback { flex-shrink: 0; }
+.explorer-body { min-height: 0; }
+
+/* 레이아웃과 필드 열 수는 HTML의 Bootstrap row/col 클래스가 담당합니다. */
+.filters { min-width: 0; padding: 22px 20px; border-bottom: 1px solid var(--border); }
+.filter-group { margin: 0; }
+.filter-group legend { float: none; margin-bottom: 14px; color: var(--text-medium); font-size: 15px; font-weight: 600; line-height: 20px; letter-spacing: -.3px; }
+.step-number { width: 20px; height: 20px; border-radius: 50%; background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 700; }
+.region-fields { --bs-gutter-x: 12px; }
+.field { min-width: 0; }
+.field .form-label { display: block; margin-bottom: 5px; color: var(--text-secondary); font-size: 12px; font-weight: 500; line-height: 18px; }
+.field .form-select { min-width: 0; height: 48px; padding-left: 16px; padding-right: 36px; border-radius: 12px; background-color: var(--field-background); background-position: right 14px center; color: var(--text-medium); font-size: 15px; font-weight: 500; text-overflow: ellipsis; cursor: pointer; }
+.field .form-select:hover:not(:disabled) { border-color: #b0b8c1; }
+.field .form-select:focus { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+.field .form-select:disabled { background-color: var(--page-background); color: var(--text-muted); cursor: not-allowed; opacity: 1; }
+.category-group { margin-top: 24px; }
+.category-group legend { margin-bottom: 16px; }
+.search-actions { --bs-gutter-x: 12px; --bs-gutter-y: 12px; margin-top: 12px; }
+.search-button { --bs-btn-border-width: 0; --bs-btn-font-weight: 600; --bs-btn-disabled-opacity: .5; gap: 10px; transition: background-color .15s, transform .15s, box-shadow .15s; }
+.btn-primary {
+  --bs-btn-color: var(--white);
+  --bs-btn-bg: var(--blue);
+  --bs-btn-hover-color: var(--white);
+  --bs-btn-hover-bg: var(--blue-dark);
+  --bs-btn-active-color: var(--white);
+  --bs-btn-active-bg: var(--blue-dark);
+  --bs-btn-disabled-color: var(--white);
+  --bs-btn-disabled-bg: var(--blue);
+  --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+  --bs-btn-font-size: 16px;
+  --bs-btn-border-radius: 14px;
+  min-height: 52px;
+}
+.btn-secondary {
+  --bs-btn-color: var(--blue-dark);
+  --bs-btn-bg: var(--blue-light);
+  --bs-btn-hover-color: var(--blue-dark);
+  --bs-btn-hover-bg: #d9eaff;
+  --bs-btn-active-color: var(--blue-dark);
+  --bs-btn-active-bg: #d9eaff;
+  --bs-btn-disabled-color: var(--blue-dark);
+  --bs-btn-disabled-bg: var(--blue-light);
+  --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+  --bs-btn-font-size: 14px;
+  --bs-btn-border-radius: 12px;
+  min-height: 44px;
+}
+.btn-secondary .icon { width: 18px; height: 18px; }
+.search-button:active:not(:disabled) { transform: scale(.985); }
+#search-feedback { --bs-alert-color: var(--text-medium); --bs-alert-bg: var(--blue-light); --bs-alert-border-color: var(--border); }
+
+.map-region { min-width: 0; min-height: max(400px, 50dvh); background: #f0f2f5; isolation: isolate; }
+#map { position: absolute; inset: 0; width: 100%; height: 100%; }
+.map-marker-title { width: 240px; max-width: calc(100vw - 32px); padding: 5px; }
+.map-result { top: 16px; left: 16px; z-index: 2; gap: 10px; max-width: calc(100% - 88px); min-height: 40px; padding: 10px 12px; border-radius: 12px; background: var(--white); color: var(--text-secondary); font-size: 12px; box-shadow: 0 3px 12px rgb(37 63 98 / 10%); pointer-events: none; }
+.status-dot { width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: var(--blue); }
+.map-controls { top: 16px; right: 16px; z-index: 2; gap: 12px; }
+.zoom-controls { overflow: hidden; border-radius: 12px; background: var(--white); box-shadow: 0 3px 12px rgb(37 63 98 / 10%); }
+.map-control {
+  --bs-btn-border-width: 0;
+  --bs-btn-border-radius: 12px;
+  --bs-btn-bg: var(--white);
+  --bs-btn-color: #4e5968;
+  --bs-btn-hover-bg: var(--blue-light);
+  --bs-btn-hover-color: var(--blue-dark);
+  --bs-btn-active-bg: var(--blue-light);
+  --bs-btn-active-color: var(--blue-dark);
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+.zoom-controls .map-control + .map-control { border-top: 1px solid var(--page-background); }
+.fit-control { box-shadow: 0 3px 12px rgb(37 63 98 / 10%); }
+.map-state { inset: 0; z-index: 3; padding: 32px; background: #f0f2f5; color: var(--text-secondary); word-break: keep-all; }
+.loading-spinner { --bs-spinner-width: 32px; --bs-spinner-height: 32px; --bs-spinner-border-width: 3px; --bs-spinner-animation-speed: .8s; color: var(--blue); }
+.map-state.is-error .loading-spinner { display: none; }
+
+/* Figma Detailed_information: 오른쪽에 떠 있는 상세 모달의 외형입니다. */
+.tour-detail-modal.offcanvas-end {
+  --bs-offcanvas-width: 291px;
+  --bs-offcanvas-bg: var(--white);
+  --bs-offcanvas-color: var(--text);
+  top: 16px;
+  right: 16px;
+  bottom: 16px;
+  width: min(var(--bs-offcanvas-width), calc(100% - 32px));
+  max-height: 922px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgb(25 45 76 / 16%);
+  overflow: hidden;
+}
+.tour-detail-close {
+  --bs-btn-border-width: 0;
+  --bs-btn-bg: var(--white);
+  --bs-btn-hover-bg: var(--blue-light);
+  --bs-btn-active-bg: var(--blue-light);
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+}
+.tour-detail-content { padding: 0; overscroll-behavior: contain; scrollbar-width: thin; }
+.tour-detail-image { display: block; width: 100%; height: 196px; object-fit: cover; background: var(--field-background); }
+.tour-detail-image.is-placeholder { object-fit: contain; }
+.tour-detail-inner { gap: 20px; padding: 20px; overflow-wrap: anywhere; }
+.tour-detail-heading h2 { color: var(--text); font-size: 24px; font-weight: 700; line-height: 34px; }
+.tour-detail-heading p { margin-top: 8px; }
+.tour-detail-text { color: var(--text-secondary); font-size: 13px; line-height: 22px; white-space: pre-line; }
+.tour-detail-divider { margin: 0; border-color: var(--border); opacity: 1; }
+.tour-detail-section-title { margin: 0 0 8px; color: var(--text); font-size: 15px; font-weight: 700; line-height: 22px; }
+.tour-detail-rows { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 16px 12px; }
+.tour-detail-rows dt { color: var(--text-secondary); font-size: 12px; font-weight: 500; line-height: 20px; }
+.tour-detail-rows dd { margin: 0; color: var(--text-medium); font-size: 13px; line-height: 22px; white-space: pre-line; }
+.tour-detail-rows a { color: var(--blue-dark); text-decoration: underline; text-underline-offset: 3px; }
+.tour-detail-extra-title { margin: 0 0 6px; color: var(--text-medium); font-size: 13px; font-weight: 600; line-height: 22px; }
+.tour-detail-status { padding: 12px; border-radius: 12px; background: var(--field-background); color: var(--text-secondary); font-size: 12px; line-height: 20px; }
+.tour-detail-status .spinner-border { color: var(--blue); }
+.tour-detail-status .btn { min-height: 36px; font-size: 12px; }
+.tour-detail-weather { padding: 16px; border: 1px solid #d9eaff; border-radius: 16px; background: linear-gradient(145deg, #f7fbff, var(--blue-light)); }
+#tour-weather-title { font-size: 14px; }
+.tour-weather-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.tour-weather-heading .tour-detail-section-title { margin: 0; }
+.tour-weather-time { flex: 0 0 auto; color: var(--text-muted); font-size: 10px; }
+.tour-weather-status { padding: 10px 0; color: var(--text-secondary); font-size: 12px; line-height: 19px; }
+.tour-weather-summary { display: flex; align-items: center; gap: 12px; }
+.tour-weather-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 15px; background: var(--white); font-size: 24px; box-shadow: 0 3px 12px rgb(37 63 98 / 8%); }
+.tour-weather-summary strong { color: var(--text); font-size: 27px; line-height: 1; }
+.tour-weather-summary p { margin-top: 5px; color: var(--text-secondary); font-size: 12px; font-weight: 600; }
+.tour-weather-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0 0; }
+.tour-weather-metrics > div { min-width: 0; padding: 10px; border-radius: 11px; background: rgb(255 255 255 / 72%); }
+.tour-weather-metrics > div:last-child { grid-column: 1 / -1; }
+.tour-weather-metrics dt { color: var(--text-muted); font-size: 10px; font-weight: 500; }
+.tour-weather-metrics dd { overflow: hidden; margin: 3px 0 0; color: var(--text-medium); font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.tour-weather-source { margin: 10px 0 0; color: var(--text-muted); font-size: 9px; text-align: right; }
+.tour-detail-photos { overflow-x: auto; padding: 4px; margin: -4px; }
+.tour-detail-photo { flex: 0 0 72px; padding: 0; border: 2px solid transparent; border-radius: 10px; overflow: hidden; }
+.tour-detail-photo[aria-pressed="true"] { border-color: var(--blue); }
+.tour-detail-photo img { display: block; width: 68px; height: 56px; object-fit: cover; background: var(--field-background); }
+.tour-detail-photo img.is-placeholder { object-fit: contain; }
+.tour-detail-credit { color: var(--text-muted); font-size: 11px; line-height: 18px; }
+.tour-detail-actions { gap: 12px; padding: 16px 20px 20px; background: var(--white); }
+.tour-detail-add-route {
+  --bs-btn-border-width: 0;
+  --bs-btn-border-radius: 12px;
+  --bs-btn-font-size: 14px;
+  --bs-btn-font-weight: 700;
+  --bs-btn-line-height: 22px;
+  gap: 8px;
+  height: 48px;
+  min-height: 48px;
+  padding: 0;
+}
+
+.explorer-footer { min-height: 55px; padding: 16px 20px; border-top: 1px solid var(--border); background: var(--white); }
+#page-footer .explorer-footer { padding-right: 72px; }
+.footer-close { width: 20px; height: 20px; margin: 5px 10px; padding: 12px; border-radius: 8px; }
+.footer-close:hover { background-color: var(--blue-light); }
+.map-hint { gap: 10px; color: var(--text-secondary); font-size: 12px; word-break: keep-all; }
+.map-hint .icon { width: 16px; height: 16px; margin-top: 2px; color: var(--text-muted); }
+.resource-links { flex-shrink: 0; font-size: 12px; }
+.resource-links a { color: var(--text-muted); }
+.resource-links a:hover { color: var(--blue-dark); }
+.site-footer { flex-shrink: 0; padding: 12px 16px; color: #b0b8c1; font-size: 11px; text-align: center; }
+.noscript-message { margin-top: 20px; color: var(--text-secondary); }
+
+/* Bootstrap의 sm(576), lg(992), xl(1200) 구간과 맞춰 테마 크기만 조정합니다. */
+@media (min-width: 576px) {
+  .site-header { height: 76px; }
+  .header-actions { margin-right: 20px; }
+  .brand { gap: 14px; }
+  .brand-mark { width: 38px; height: 38px; border-radius: 12px; }
+  .brand-name { font-size: 25px; }
+  .page-tag { --bs-badge-font-size: 13px; width: 143px; padding: 8px 16px; }
+  .explorer-footer { padding-inline: 24px; }
+  .filters { padding: 24px; }
+  .region-fields { --bs-gutter-x: 16px; }
+  .category-group { margin-top: 27px; }
+  .map-region { min-height: max(480px, 50dvh); }
+  .map-result { top: 24px; left: 24px; max-width: calc(100% - 104px); padding: 10px 16px; font-size: 13px; }
+  .map-controls { top: 24px; right: 24px; }
+  .map-hint .icon { margin-top: 0; }
+  .site-footer { padding-inline: 24px; font-size: 12px; }
+}
+
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .btn-secondary { --bs-btn-border-radius: 14px; min-height: 52px; }
+}
+
+@media (max-width: 767.98px) {
+  .site-header { height: auto; }
+  .header-inner { flex-wrap: wrap; min-height: 68px; row-gap: 0; }
+  .community-nav { order: 3; display: flex; justify-content: center; width: 100%; margin: 0; padding: 5px 0 7px; border-top: 1px solid var(--border); }
+  .community-nav-link { padding: 7px 10px; font-size: 12px; }
+  .header-actions { margin-right: 0; }
+  .user-greeting { display: none; }
+}
+
+@media (min-width: 768px) {
+  .community-nav { display: flex; }
+}
+
+@media (min-width: 992px) {
+  /* 데스크톱에서는 헤더·푸터를 제외한 화면을 지도와 검색 패널로 채웁니다. */
+  body { height: 100vh; height: 100dvh; }
+  .header-actions { margin-right: 40px; }
+  .explorer-body { flex-basis: 0; flex-wrap: nowrap; overflow: hidden; }
+  .filters { display: flex; flex-direction: column; width: 320px; height: 100%; overflow: hidden; padding-block: 23px 21px; border-bottom: 0; border-right: 1px solid var(--border); }
+  .filter-fields { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+  .search-actions, #nearby-help { flex-shrink: 0; }
+  .map-region { min-height: 0; }
+  .tour-detail-modal.offcanvas-end { top: min(133px, 15dvh); right: 22px; bottom: 24px; }
+}
+
+@media (min-width: 1200px) {
+  .header-inner { position: relative; }
+  .community-nav { position: absolute; left: 50%; margin: 0; transform: translateX(-50%); }
+  .page-tag { display: inline-block; }
+  .filters { width: 352px; padding-inline: 27px; }
+  .explorer-footer { padding-inline: 27px; }
+
+}
+
+@media (max-width: 380px) {
+  .page-width { width: calc(100% - 24px); }
+  .brand { margin-left: 4px; }
+  .brand-logo-crop { width: 118px; height: 40px; }
+  .brand-logo { width: 145px; transform: translate(-13px, -26px); }
+  .auth-nav .btn { padding-inline: 9px; font-size: 12px; }
+  .user-greeting { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* 메뉴를 숨겨도 토글 버튼은 남아 있고, 기존 지도 ResizeObserver가 크기를 갱신합니다. */
+.map-page .explorer-body { position: relative; padding-top: 52px; }
+.sidebar-panel { flex: 0 0 auto; min-width: 0; }
+.sidebar-toggle { position: absolute; top: 8px; left: 16px; z-index: 10; width: auto; min-height: 36px; gap: 4px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--white); color: var(--text-secondary); font-size: 12px; font-weight: 600; }
+.sidebar-toggle:hover, .sidebar-toggle:focus-visible { border-color: var(--blue); background: var(--blue-light); color: var(--blue-dark); }
+.sidebar-toggle .icon { width: 18px; height: 18px; }
+.sidebar-toggle[aria-expanded="false"] .icon { transform: rotate(180deg); }
+
+@media (max-width: 991.98px) {
+  .sidebar-panel.collapsing { transition: none; }
+}
+
+@media (min-width: 992px) {
+  .map-page .explorer-body { --sidebar-width: 320px; padding-top: 0; }
+  .sidebar-panel { width: var(--sidebar-width); height: 100%; }
+  .sidebar-panel.collapse-horizontal.collapsing { height: 100%; }
+  .sidebar-panel > .filters { width: var(--sidebar-width); }
+  .sidebar-toggle { top: 88px; left: var(--sidebar-width); width: 32px; height: 56px; padding: 0; border-radius: 0 12px 12px 0; box-shadow: 3px 2px 8px rgb(25 31 40 / 8%); transition: left .35s ease; }
+  .is-sidebar-collapsed .sidebar-toggle { left: 0; }
+  .sidebar-toggle-label { display: none; }
+}
+
+@media (min-width: 1200px) {
+  .map-page .explorer-body { --sidebar-width: 352px; }
+}
+
+/* 사이드바 세로 탭 스타일 */
+.filters .sidebar-tabs {
+  width: 64px;
+  background-color: #f8f9fa;
+  border-right: 1px solid var(--border, #e5e8eb);
+  flex-shrink: 0;
+}
+
+.filters .sidebar-tabs .nav-link {
+  color: var(--text-secondary, #6b7684);
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent !important;
+}
+
+.filters .sidebar-tabs .nav-link:hover {
+  color: var(--blue, #3182f6);
+  background-color: #e8f3ff;
+}
+
+.filters .sidebar-tabs .nav-link.active {
+  color: var(--blue, #3182f6);
+  background-color: #ffffff;
+  border-left-color: var(--blue, #3182f6) !important;
+  font-weight: 700;
+}
+
+.filters .sidebar-tabs .tab-label {
+  line-height: 1.2;
+}
+
+/* 탭 내부 스크롤 처리 */
+.filters .tab-content {
+  min-width: 0;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.plan-create-card { border: 1px dashed var(--blue); border-radius: 16px; background: var(--blue-light); color: var(--blue-dark); font-size: 14px; }
+.plan-create-card:hover, .plan-create-card:focus-visible { border-color: var(--blue-dark); background: #d9eaff; color: var(--blue-dark); }
+.plan-create-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--white); }
+.plan-card-title { min-width: 0; }
+.plan-create-form .form-control { min-width: 0; min-height: 48px; border-radius: 12px; background-color: var(--field-background); color: var(--text-medium); font-size: 14px; }
+.plan-create-form .form-control:focus { border-color: var(--blue); background-color: var(--white); box-shadow: 0 0 0 1px var(--blue); }
+.tour-plan-picker .form-select { min-height: 40px; border-radius: 10px; background-color: var(--field-background); font-size: 13px; }
+.tour-plan-picker .btn { min-height: 40px; --bs-btn-border-radius: 10px; --bs-btn-font-size: 13px; }
+
+/* Figma 02 · 검색 결과 목록 */
+.filters .sidebar-tabs .nav-link { min-height: 76px; }
+#tab-results-btn .tab-label { white-space: nowrap; font-weight: 500; }
+.search-results-tab-icon { flex: 0 0 auto; }
+#tab-results-btn:not(.active) .search-results-tab-icon { filter: grayscale(1); opacity: .7; }
+.search-results-panel { gap: 16px; }
+.search-results-title { color: var(--text); font-size: 20px; font-weight: 700; line-height: 34px; }
+.search-results-summary { color: var(--text-secondary); font-size: 13px; line-height: 20px; }
+.search-results-filters { max-width: 100%; padding: 8px; border-radius: 8px; background: var(--blue-light); color: var(--blue); font-size: 12px; font-weight: 500; line-height: 20px; overflow-wrap: anywhere; }
+.search-results-divider { margin: 0; border-color: var(--border); opacity: 1; }
+.search-results-sort { margin-bottom: -8px; }
+.search-results-sort .btn { flex-basis: 0; min-width: 0; min-height: 32px; padding: 6px 0; border: 0; border-radius: 12px; color: var(--text-secondary); font-size: 12px; font-weight: 500; line-height: 20px; }
+.search-results-sort .btn:hover, .search-results-sort .btn[aria-pressed="true"] { background: var(--blue-light); color: var(--blue); }
+.search-results-sort .btn[aria-pressed="true"] { font-weight: 700; }
+.search-results-list { border-radius: 0; }
+.search-result-item { position: relative; height: 72px; padding: 12px; border: 0; border-radius: 0; background: var(--white); color: var(--text); }
+.search-result-item::after { position: absolute; right: 12px; bottom: 0; left: 12px; height: 1px; background: var(--border); content: ""; }
+.search-result-item:hover { background: var(--field-background); }
+.search-result-item.is-selected, .search-result-item:active { background: var(--blue-light); }
+.search-result-item.is-selected .search-result-name { color: var(--blue); }
+.search-result-item:focus-visible { z-index: 1; outline-offset: -3px; }
+.search-result-text { min-width: 0; gap: 4px; }
+.search-result-name { color: var(--text); font-size: 14px; font-weight: 700; line-height: 22px; }
+.search-result-address { color: var(--text-secondary); font-size: 12px; font-weight: 400; line-height: 20px; }
+.search-results-hint { color: var(--text-muted); font-size: 12px; line-height: 20px; }
+.search-results-empty { padding: 20px 12px; border-radius: 12px; background: var(--field-background); color: var(--text-secondary); font-size: 13px; line-height: 22px; word-break: keep-all; overflow-wrap: anywhere; }
+@media (max-width: 991.98px) {
+  .search-results-list { max-height: min(360px, 45dvh); overflow-y: auto; overscroll-behavior: contain; }
+}
+
+/* 여행 경로: 피그마 08 화면의 방문 목록과 순서 변경 상태 */
+#plan-depth-detail { display: flex; flex-direction: column; gap: 16px; }
+.plan-detail-heading { gap: 16px; min-width: 0; }
+.plan-back { min-height: 32px; padding: 3px 10px; border-color: var(--border); border-radius: 12px; color: var(--text-secondary); font-size: 16px; font-weight: 700; }
+.plan-detail-title { color: var(--text); font-size: 17px; font-weight: 700; line-height: 34px; }
+.plan-detail-meta { color: var(--text-secondary); font-size: 12px; line-height: 20px; }
+.plan-route-info { gap: 6px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--field-background); }
+.plan-route-label { color: var(--text-secondary); font-size: 12px; font-weight: 700; line-height: 20px; }
+.plan-route-badge { padding: 8px; border-radius: 8px; background: var(--blue-light); color: var(--blue); font-size: 12px; font-weight: 500; line-height: 20px; }
+.plan-visits-title { margin: 0; color: var(--text-secondary); font-size: 13px; font-weight: 700; line-height: 20px; }
+.plan-optimize-button { min-height: 44px; margin-bottom: -8px; padding: 11px 8px; border: 0; border-radius: 12px; background: var(--blue-light); color: var(--blue); font-size: 14px; font-weight: 700; line-height: 22px; }
+.plan-optimize-button:hover, .plan-optimize-button:focus-visible { background: var(--blue-light); color: var(--blue-dark); }
+#detail-place-list { position: relative; }
+.itinerary-place { position: relative; min-height: 56px; padding: 11px; border: 1px solid var(--border); border-radius: 12px; background: var(--white); gap: 8px; }
+.itinerary-drag { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 24px; width: 24px; height: 32px; padding: 0; border: 0; border-radius: 6px; cursor: grab; touch-action: none; user-select: none; }
+.itinerary-grip-slot { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 20px; }
+.itinerary-drag:disabled { cursor: default; opacity: .35; }
+.itinerary-number { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 24px; height: 24px; border-radius: 12px; background: var(--blue); color: var(--white); font-size: 11px; font-weight: 700; line-height: 20px; }
+.itinerary-place-text { min-width: 0; }
+.itinerary-place-name { font-size: 13px; font-weight: 700; line-height: 20px; color: var(--text); }
+.itinerary-visit-time { font-size: 11px; color: var(--text-secondary); }
+.itinerary-lock { flex: 0 0 24px; width: 24px; height: 32px; padding: 0; border: 0; color: var(--text-muted); }
+.itinerary-lock .icon { width: 16px; height: 16px; }
+.itinerary-lock[aria-pressed="true"] { border-radius: 6px; background: var(--blue-light); color: var(--blue); }
+.itinerary-delete { padding: 6px 0; border: 0; color: var(--text-secondary); font-size: 11px; line-height: 20px; }
+.itinerary-delete:hover { color: var(--bs-danger); }
+.itinerary-place.is-dragging { z-index: 5; border-color: var(--blue); background: var(--blue-light); box-shadow: 0 6px 18px rgb(49 130 246 / 18%); opacity: .85; pointer-events: none; }
+.itinerary-place.is-dragging .itinerary-drag { cursor: grabbing; }
+.itinerary-drop-indicator { position: absolute; right: 0; left: 0; z-index: 6; height: 2px; background: var(--blue); pointer-events: none; }
+.itinerary-drop-indicator.is-blocked { background: var(--bs-danger); }

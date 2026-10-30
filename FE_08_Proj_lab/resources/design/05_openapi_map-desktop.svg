@@ -1,0 +1,288 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1080" viewBox="0 0 1440 1080">
+<title>Enjoy Trip · 관광지 탐색</title><desc>밝은 회색과 블루를 사용하는 관광지 탐색 UI. 지역 2개와 분류 3개, 관광지 조회와 주변 조회 버튼, 지도 미리보기가 하나의 패널로 연결됩니다.</desc>
+<defs>
+  <filter id="panel-shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="12" stdDeviation="22" flood-color="#192D4C" flood-opacity="0.055"/></filter>
+  <filter id="float-shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#253F62" flood-opacity="0.10"/></filter>
+  <clipPath id="panel-clip"><rect x="96" y="268" width="1248" height="724" rx="28"/></clipPath>
+  <clipPath id="map-clip"><rect x="448" y="344" width="896" height="592"/></clipPath>
+</defs>
+<g id="Desktop-1440">
+<rect x="0" y="0" width="1440" height="1080" rx="0" fill="#F2F4F6" />
+<g id="Page-header">
+<rect x="0" y="0" width="1440" height="88" rx="0" fill="#FFFFFF" />
+<path d="M96 88H1344" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+<rect x="96" y="25" width="38" height="38" rx="12" fill="#3182F6" />
+<g id="icon-pin" transform="translate(106 31) scale(0.7916666666666666)">
+<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="12" cy="10" r="2.5" fill="none" stroke="#FFFFFF" stroke-width="2" />
+</g>
+<text x="148" y="53" font-family="Noto Sans KR" font-size="25" font-weight="700" fill="#191F28" text-anchor="start" >enjoytrip</text>
+<text x="276" y="52" font-family="Noto Sans KR" font-size="13" font-weight="400" fill="#8B95A1" text-anchor="start" >여행의 시작</text>
+<rect x="1201" y="27" width="143" height="34" rx="17" fill="#E8F3FF" />
+<text x="1272.5" y="49" font-family="Noto Sans KR" font-size="13" font-weight="600" fill="#2272EB" text-anchor="middle" >관광지 탐색</text>
+</g>
+<g id="Page-introduction">
+<text x="96" y="139" font-family="Noto Sans KR" font-size="13" font-weight="500" fill="#6B7684" text-anchor="start" >가까운 곳에서 발견하는 새로운 여행</text>
+<text x="96" y="191" font-family="Noto Sans KR" font-size="36" font-weight="700" fill="#191F28" text-anchor="start" letter-spacing="-1.1">오늘은 어디로 떠나볼까요?</text>
+<text x="96" y="226" font-family="Noto Sans KR" font-size="16" font-weight="400" fill="#6B7684" text-anchor="start" >지역과 관심사를 고르면, 여행할 만한 곳을 지도에서 찾아드려요.</text>
+</g>
+<g id="Travel-explorer-unified-panel">
+<rect x="96" y="268" width="1248" height="724" rx="28" fill="#FFFFFF" stroke="#E5E8EB" stroke-width="1" filter="url(#panel-shadow)"/>
+<g clip-path="url(#panel-clip)">
+<g id="Explorer-header">
+<text x="124" y="315" font-family="Noto Sans KR" font-size="20" font-weight="700" fill="#191F28" text-anchor="start" >나만의 여행 지도</text>
+<text x="285" y="315" font-family="Noto Sans KR" font-size="14" font-weight="400" fill="#8B95A1" text-anchor="start" >조건을 고르고, 지도에서 발견해요</text>
+<rect x="1122" y="289" width="194" height="34" rx="17" fill="#E8F3FF" />
+<g id="icon-pin" transform="translate(1135 297) scale(0.6666666666666666)">
+<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z" fill="none" stroke="#3182F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="12" cy="10" r="2.5" fill="none" stroke="#3182F6" stroke-width="2" />
+</g>
+<text x="1159" y="311" font-family="Noto Sans KR" font-size="13" font-weight="600" fill="#2272EB" text-anchor="start" >서울특별시 · 강남구</text>
+<path d="M96 344H1344" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+<g id="Filter-and-actions">
+<rect x="96" y="344" width="352" height="592" rx="0" fill="#FFFFFF" />
+<path d="M448 344V936" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="134" cy="377" r="10" fill="#E8F3FF" />
+<text x="134" y="381" font-family="Noto Sans KR" font-size="11" font-weight="700" fill="#3182F6" text-anchor="middle" >1</text>
+<text x="152" y="383" font-family="Noto Sans KR" font-size="15" font-weight="600" fill="#333D4B" text-anchor="start" >어디로 갈까요?</text>
+<g id="select-시·도">
+<text x="124" y="412" font-family="Noto Sans KR" font-size="12" font-weight="500" fill="#6B7684" text-anchor="start" >시·도</text>
+<rect x="124" y="424" width="140" height="48" rx="12" fill="#F9FAFB" stroke="#E5E8EB" stroke-width="1" />
+<text x="140" y="454" font-family="Noto Sans KR" font-size="15" font-weight="500" fill="#333D4B" text-anchor="start" >서울특별시</text>
+<g id="icon-down" transform="translate(231 439) scale(0.75)">
+<path d="m7 10 5 5 5-5" fill="none" stroke="#6B7684" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+</g>
+<g id="select-시·군·구">
+<text x="280" y="412" font-family="Noto Sans KR" font-size="12" font-weight="500" fill="#6B7684" text-anchor="start" >시·군·구</text>
+<rect x="280" y="424" width="140" height="48" rx="12" fill="#F9FAFB" stroke="#E5E8EB" stroke-width="1" />
+<text x="296" y="454" font-family="Noto Sans KR" font-size="15" font-weight="500" fill="#333D4B" text-anchor="start" >강남구</text>
+<g id="icon-down" transform="translate(387 439) scale(0.75)">
+<path d="m7 10 5 5 5-5" fill="none" stroke="#6B7684" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+</g>
+<circle cx="134" cy="509" r="10" fill="#E8F3FF" />
+<text x="134" y="513" font-family="Noto Sans KR" font-size="11" font-weight="700" fill="#3182F6" text-anchor="middle" >2</text>
+<text x="152" y="515" font-family="Noto Sans KR" font-size="15" font-weight="600" fill="#333D4B" text-anchor="start" >어떤 여행을 좋아하세요?</text>
+<g id="select-대분류">
+<text x="124" y="546" font-family="Noto Sans KR" font-size="12" font-weight="500" fill="#6B7684" text-anchor="start" >대분류</text>
+<rect x="124" y="558" width="296" height="48" rx="12" fill="#F9FAFB" stroke="#E5E8EB" stroke-width="1" />
+<text x="140" y="588" font-family="Noto Sans KR" font-size="15" font-weight="500" fill="#333D4B" text-anchor="start" >자연</text>
+<g id="icon-down" transform="translate(387 573) scale(0.75)">
+<path d="m7 10 5 5 5-5" fill="none" stroke="#6B7684" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+</g>
+<g id="select-중분류">
+<text x="124" y="634" font-family="Noto Sans KR" font-size="12" font-weight="500" fill="#6B7684" text-anchor="start" >중분류</text>
+<rect x="124" y="646" width="296" height="48" rx="12" fill="#F9FAFB" stroke="#3182F6" stroke-width="1.5" />
+<text x="140" y="676" font-family="Noto Sans KR" font-size="15" font-weight="500" fill="#333D4B" text-anchor="start" >자연관광</text>
+<g id="icon-down" transform="translate(387 661) scale(0.75)">
+<path d="m7 10 5 5 5-5" fill="none" stroke="#6B7684" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+</g>
+<g id="select-소분류">
+<text x="124" y="722" font-family="Noto Sans KR" font-size="12" font-weight="500" fill="#6B7684" text-anchor="start" >소분류</text>
+<rect x="124" y="734" width="296" height="48" rx="12" fill="#F2F4F6" stroke="#E5E8EB" stroke-width="1" />
+<text x="140" y="764" font-family="Noto Sans KR" font-size="15" font-weight="500" fill="#8B95A1" text-anchor="start" >소분류 선택</text>
+<g id="icon-down" transform="translate(387 749) scale(0.75)">
+<path d="m7 10 5 5 5-5" fill="none" stroke="#B0B8C1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+</g>
+<g id="btn_trip_search">
+<rect x="124" y="806" width="296" height="52" rx="14" fill="#3182F6" />
+<g id="icon-search" transform="translate(210 822) scale(0.8333333333333334)">
+<circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="#FFFFFF" stroke-width="2" />
+<path d="m16 16 5 5" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+<text x="240" y="838" font-family="Noto Sans KR" font-size="16" font-weight="600" fill="#FFFFFF" text-anchor="start" >관광지 조회</text>
+</g><g id="btn_around_search">
+<rect x="124" y="870" width="296" height="44" rx="12" fill="#E8F3FF" />
+<g id="icon-location" transform="translate(192 883) scale(0.75)">
+<circle cx="12" cy="12" r="7" fill="none" stroke="#2272EB" stroke-width="1.8" />
+<circle cx="12" cy="12" r="2.5" fill="#2272EB" />
+<path d="M12 1v3m0 16v3M1 12h3m16 0h3" fill="none" stroke="#2272EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+<text x="220" y="898" font-family="Noto Sans KR" font-size="14" font-weight="600" fill="#2272EB" text-anchor="start" >내 주변 관광지 조회</text>
+</g></g>
+<g id="Map-preview" clip-path="url(#map-clip)">
+<rect x="448" y="344" width="896" height="592" rx="0" fill="#F0F2F5" />
+<g id="Editable-map-base" transform="translate(448 344)">
+<rect x="-31" y="-36" width="63" height="54" rx="7" fill="#E5E9EE" />
+<rect x="788" y="-36" width="63" height="54" rx="7" fill="#E5E9EE" />
+<rect x="879" y="-36" width="68" height="54" rx="7" fill="#E9ECF0" />
+<rect x="-20" y="50" width="63" height="60" rx="7" fill="#E9ECF0" />
+<rect x="799" y="50" width="63" height="60" rx="7" fill="#E9ECF0" />
+<rect x="890" y="50" width="68" height="60" rx="7" fill="#E2E7ED" />
+<rect x="-31" y="136" width="63" height="54" rx="7" fill="#E2E7ED" />
+<rect x="60" y="136" width="68" height="54" rx="7" fill="#E5E9EE" />
+<rect x="151" y="136" width="73" height="54" rx="7" fill="#E9ECF0" />
+<rect x="242" y="136" width="63" height="54" rx="7" fill="#E2E7ED" />
+<rect x="333" y="136" width="68" height="54" rx="7" fill="#E5E9EE" />
+<rect x="424" y="136" width="73" height="54" rx="7" fill="#E9ECF0" />
+<rect x="515" y="136" width="63" height="54" rx="7" fill="#E2E7ED" />
+<rect x="606" y="136" width="68" height="54" rx="7" fill="#E5E9EE" />
+<rect x="697" y="136" width="73" height="54" rx="7" fill="#E9ECF0" />
+<rect x="788" y="136" width="63" height="54" rx="7" fill="#E2E7ED" />
+<rect x="879" y="136" width="68" height="54" rx="7" fill="#E5E9EE" />
+<rect x="-20" y="222" width="63" height="60" rx="7" fill="#E5E9EE" />
+<rect x="71" y="222" width="68" height="60" rx="7" fill="#E9ECF0" />
+<rect x="162" y="222" width="73" height="60" rx="7" fill="#E2E7ED" />
+<rect x="253" y="222" width="63" height="60" rx="7" fill="#E5E9EE" />
+<rect x="344" y="222" width="68" height="60" rx="7" fill="#E9ECF0" />
+<rect x="435" y="222" width="73" height="60" rx="7" fill="#E2E7ED" />
+<rect x="526" y="222" width="63" height="60" rx="7" fill="#E5E9EE" />
+<rect x="617" y="222" width="68" height="60" rx="7" fill="#E9ECF0" />
+<rect x="708" y="222" width="73" height="60" rx="7" fill="#E2E7ED" />
+<rect x="799" y="222" width="63" height="60" rx="7" fill="#E5E9EE" />
+<rect x="890" y="222" width="68" height="60" rx="7" fill="#E9ECF0" />
+<rect x="-31" y="308" width="63" height="54" rx="7" fill="#E9ECF0" />
+<rect x="60" y="308" width="68" height="54" rx="7" fill="#E2E7ED" />
+<rect x="151" y="308" width="73" height="54" rx="7" fill="#E5E9EE" />
+<rect x="242" y="308" width="63" height="54" rx="7" fill="#E9ECF0" />
+<rect x="333" y="308" width="68" height="54" rx="7" fill="#E2E7ED" />
+<rect x="424" y="308" width="73" height="54" rx="7" fill="#E5E9EE" />
+<rect x="515" y="308" width="63" height="54" rx="7" fill="#E9ECF0" />
+<rect x="606" y="308" width="68" height="54" rx="7" fill="#E2E7ED" />
+<rect x="697" y="308" width="73" height="54" rx="7" fill="#E5E9EE" />
+<rect x="788" y="308" width="63" height="54" rx="7" fill="#E9ECF0" />
+<rect x="879" y="308" width="68" height="54" rx="7" fill="#E2E7ED" />
+<rect x="-20" y="394" width="63" height="60" rx="7" fill="#E2E7ED" />
+<rect x="71" y="394" width="68" height="60" rx="7" fill="#E5E9EE" />
+<rect x="162" y="394" width="73" height="60" rx="7" fill="#E9ECF0" />
+<rect x="253" y="394" width="63" height="60" rx="7" fill="#E2E7ED" />
+<rect x="344" y="394" width="68" height="60" rx="7" fill="#E5E9EE" />
+<rect x="435" y="394" width="73" height="60" rx="7" fill="#E9ECF0" />
+<rect x="526" y="394" width="63" height="60" rx="7" fill="#E2E7ED" />
+<rect x="617" y="394" width="68" height="60" rx="7" fill="#E5E9EE" />
+<rect x="708" y="394" width="73" height="60" rx="7" fill="#E9ECF0" />
+<rect x="799" y="394" width="63" height="60" rx="7" fill="#E2E7ED" />
+<rect x="890" y="394" width="68" height="60" rx="7" fill="#E5E9EE" />
+<rect x="-31" y="480" width="63" height="54" rx="7" fill="#E5E9EE" />
+<rect x="60" y="480" width="68" height="54" rx="7" fill="#E9ECF0" />
+<rect x="151" y="480" width="73" height="54" rx="7" fill="#E2E7ED" />
+<rect x="242" y="480" width="63" height="54" rx="7" fill="#E5E9EE" />
+<rect x="333" y="480" width="68" height="54" rx="7" fill="#E9ECF0" />
+<rect x="424" y="480" width="73" height="54" rx="7" fill="#E2E7ED" />
+<rect x="515" y="480" width="63" height="54" rx="7" fill="#E5E9EE" />
+<rect x="606" y="480" width="68" height="54" rx="7" fill="#E9ECF0" />
+<rect x="697" y="480" width="73" height="54" rx="7" fill="#E2E7ED" />
+<rect x="788" y="480" width="63" height="54" rx="7" fill="#E5E9EE" />
+<rect x="879" y="480" width="68" height="54" rx="7" fill="#E9ECF0" />
+<path d="M-40 190 942 190" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M-50 356 941 356" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M94-50V640" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M302-50V630" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M510-50V641" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M796-50V650" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M-60 303 1012 538" fill="none" stroke="#DCE2E9" stroke-width="35" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M-60 303 1012 538" fill="none" stroke="#FFFFFF" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M195-60 556 670" fill="none" stroke="#DCE2E9" stroke-width="35" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M195-60 556 670" fill="none" stroke="#FFFFFF" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M620-30C634 78 628 128 675 222S727 415 732 653" fill="none" stroke="#DCE2E9" stroke-width="35" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M620-30C634 78 628 128 675 222S727 415 732 653" fill="none" stroke="#FFFFFF" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M-95 65C55 142 191 109 286 63S466 91 574 126S753 84 1000 108" fill="none" stroke="#B9D8FF" stroke-width="74" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M-95 65C55 142 191 109 286 63S466 91 574 126S753 84 1000 108" fill="none" stroke="#C5E1FF" stroke-width="56" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M300 13 318 135" fill="none" stroke="#F5F7FA" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M548 62 526 158" fill="none" stroke="#F5F7FA" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
+<rect x="354" y="235" width="165" height="105" rx="23" fill="#D9EBDD" />
+<rect x="141" y="154" width="108" height="68" rx="18" fill="#DDEDE0" />
+<rect x="665" y="161" width="111" height="66" rx="18" fill="#DDEDE0" />
+<path d="M202 487Q255 447 290 489T367 538L345 602H218Z" fill="#DDEDE0" stroke="#DDEDE0" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="377" cy="254" r="8" fill="#C7DFCD" />
+<circle cx="401" cy="278" r="8" fill="#C7DFCD" />
+<circle cx="476" cy="296" r="8" fill="#C7DFCD" />
+<circle cx="183" cy="172" r="8" fill="#C7DFCD" />
+<circle cx="222" cy="185" r="8" fill="#C7DFCD" />
+<circle cx="689" cy="176" r="8" fill="#C7DFCD" />
+<circle cx="739" cy="183" r="8" fill="#C7DFCD" />
+<circle cx="265" cy="521" r="8" fill="#C7DFCD" />
+<circle cx="312" cy="551" r="8" fill="#C7DFCD" />
+<text x="420" y="101" font-family="Noto Sans KR" font-size="15" font-weight="500" fill="#6D9CCF" text-anchor="middle" letter-spacing="8">한강</text>
+<text x="613" y="501" font-family="Noto Sans KR" font-size="24" font-weight="600" fill="#B0B8C1" text-anchor="middle" letter-spacing="4">강남구</text>
+<text x="216" y="333" font-family="Noto Sans KR" font-size="11" font-weight="400" fill="#A1ABB7" text-anchor="start" transform="rotate(12 216 333)">테헤란로</text>
+<text x="695" y="426" font-family="Noto Sans KR" font-size="11" font-weight="400" fill="#A1ABB7" text-anchor="start" transform="rotate(76 695 426)">영동대로</text>
+<text x="237" y="204" font-family="Noto Sans KR" font-size="11" font-weight="400" fill="#A1ABB7" text-anchor="start" >도산대로</text>
+<text x="82" y="483" font-family="Noto Sans KR" font-size="13" font-weight="500" fill="#A1ABB7" text-anchor="start" >논현동</text>
+<text x="517" y="215" font-family="Noto Sans KR" font-size="13" font-weight="500" fill="#A1ABB7" text-anchor="start" >삼성동</text>
+<text x="304" y="406" font-family="Noto Sans KR" font-size="13" font-weight="500" fill="#A1ABB7" text-anchor="start" >역삼동</text>
+<g id="marker-도산공원" transform="translate(186 207)">
+<circle cx="0" cy="1" r="12" fill="#3182F6" opacity="0.10"/>
+<path d="M0 0C-3-4-13-12-13-20a13 13 0 0 1 26 0C13-12 3-4 0 0Z" fill="#3182F6" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="0" cy="-20" r="4" fill="#FFFFFF" />
+<text x="0" y="22" font-family="Noto Sans KR" font-size="12" font-weight="600" fill="#4E5968" text-anchor="middle">도산공원</text>
+</g>
+<g id="marker-봉은사" transform="translate(701 223)">
+<circle cx="0" cy="1" r="12" fill="#3182F6" opacity="0.10"/>
+<path d="M0 0C-3-4-13-12-13-20a13 13 0 0 1 26 0C13-12 3-4 0 0Z" fill="#3182F6" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="0" cy="-20" r="4" fill="#FFFFFF" />
+<text x="0" y="22" font-family="Noto Sans KR" font-size="12" font-weight="600" fill="#4E5968" text-anchor="middle">봉은사</text>
+</g>
+<g id="marker-코엑스" transform="translate(746 337)">
+<circle cx="0" cy="1" r="12" fill="#3182F6" opacity="0.10"/>
+<path d="M0 0C-3-4-13-12-13-20a13 13 0 0 1 26 0C13-12 3-4 0 0Z" fill="#3182F6" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="0" cy="-20" r="4" fill="#FFFFFF" />
+<text x="0" y="22" font-family="Noto Sans KR" font-size="12" font-weight="600" fill="#4E5968" text-anchor="middle">코엑스</text>
+</g>
+<g id="marker-양재시민의숲" transform="translate(286 531)">
+<circle cx="0" cy="1" r="12" fill="#3182F6" opacity="0.10"/>
+<path d="M0 0C-3-4-13-12-13-20a13 13 0 0 1 26 0C13-12 3-4 0 0Z" fill="#3182F6" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="0" cy="-20" r="4" fill="#FFFFFF" />
+<text x="0" y="22" font-family="Noto Sans KR" font-size="12" font-weight="600" fill="#4E5968" text-anchor="middle">양재시민의숲</text>
+</g>
+<circle cx="538" cy="425" r="20" fill="#E8F3FF" stroke="#FFFFFF" stroke-width="3" />
+<text x="538" y="431" font-family="Noto Sans KR" font-size="15" font-weight="700" fill="#2272EB" text-anchor="middle" >8</text>
+<circle cx="85" cy="269" r="20" fill="#E8F3FF" stroke="#FFFFFF" stroke-width="3" />
+<text x="85" y="275" font-family="Noto Sans KR" font-size="15" font-weight="700" fill="#2272EB" text-anchor="middle" >7</text>
+<g id="marker-tourist-place" transform="translate(437 303)">
+<circle cx="0" cy="1" r="18" fill="#3182F6" opacity="0.10"/>
+<path d="M0 0C-3-4-13-12-13-20a13 13 0 0 1 26 0C13-12 3-4 0 0Z" fill="#3182F6" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="0" cy="-20" r="4" fill="#FFFFFF" />
+</g>
+<g id="Hovered-place-tooltip">
+<rect x="360" y="181" width="155" height="77" rx="16" fill="#FFFFFF" filter="url(#float-shadow)"/>
+<path d="M428 258 437 267 446 258" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" />
+<g id="icon-leaf" transform="translate(374 194) scale(0.6666666666666666)">
+<path d="M20 4C10 2 3 7 5 15c7 4 14-1 15-11Z" fill="none" stroke="#3EA47C" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M4 21 15 9" fill="none" stroke="#3EA47C" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+<text x="397" y="207" font-family="Noto Sans KR" font-size="11" font-weight="600" fill="#3EA47C" text-anchor="start" >자연관광</text>
+<text x="375" y="236" font-family="Noto Sans KR" font-size="16" font-weight="600" fill="#333D4B" text-anchor="start" >선릉과 정릉</text>
+</g></g>
+<g id="Map-toolbar">
+<rect x="472" y="368" width="217" height="40" rx="12" fill="#FFFFFF" filter="url(#float-shadow)"/>
+<circle cx="492" cy="388" r="4" fill="#3182F6" />
+<text x="506" y="394" font-family="Noto Sans KR" font-size="13" font-weight="500" fill="#4E5968" text-anchor="start" >선택한 조건의 관광지 20곳</text>
+<rect x="1280" y="368" width="40" height="80" rx="12" fill="#FFFFFF" filter="url(#float-shadow)"/>
+<g id="icon-plus" transform="translate(1291 379) scale(0.75)">
+<path d="M12 5v14M5 12h14" fill="none" stroke="#4E5968" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+<path d="M1289 408H1311" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+<g id="icon-minus" transform="translate(1291 419) scale(0.75)">
+<path d="M5 12h14" fill="none" stroke="#4E5968" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+<rect x="1280" y="460" width="40" height="40" rx="12" fill="#FFFFFF" filter="url(#float-shadow)"/>
+<g id="icon-location" transform="translate(1290 470) scale(0.8333333333333334)">
+<circle cx="12" cy="12" r="7" fill="none" stroke="#4E5968" stroke-width="1.8" />
+<circle cx="12" cy="12" r="2.5" fill="#4E5968" />
+<path d="M12 1v3m0 16v3M1 12h3m16 0h3" fill="none" stroke="#4E5968" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+<rect x="472" y="884" width="152" height="30" rx="8" fill="#FFFFFF" opacity="0.9"/>
+<circle cx="487" cy="899" r="3" fill="#3182F6" />
+<text x="498" y="904" font-family="Noto Sans KR" font-size="11" font-weight="400" fill="#6B7684" text-anchor="start" >지도 미리보기</text>
+<text x="1317" y="919" font-family="Noto Sans KR" font-size="10" font-weight="500" fill="#8B95A1" text-anchor="end" >Kakao Maps</text>
+</g></g>
+<g id="Explorer-footer">
+<rect x="96" y="936" width="1248" height="56" rx="0" fill="#FFFFFF" />
+<path d="M96 936H1344" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+<g id="icon-info" transform="translate(124 955) scale(0.75)">
+<circle cx="12" cy="12" r="9" fill="none" stroke="#8B95A1" stroke-width="1.8" />
+<path d="M12 11v6" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="12" cy="7.5" r="1" fill="#8B95A1" />
+</g>
+<text x="151" y="969" font-family="Noto Sans KR" font-size="13" font-weight="400" fill="#6B7684" text-anchor="start" >마커에 마우스를 올리면 관광지 이름을 확인할 수 있어요.</text>
+<text x="1090" y="969" font-family="Noto Sans KR" font-size="12" font-weight="400" fill="#8B95A1" text-anchor="start" >카카오맵 API ↗</text>
+<text x="1221" y="969" font-family="Noto Sans KR" font-size="12" font-weight="400" fill="#8B95A1" text-anchor="start" >공공데이터 ↗</text>
+</g></g></g>
+<text x="720" y="1036" font-family="Noto Sans KR" font-size="12" font-weight="400" fill="#B0B8C1" text-anchor="middle" >Enjoy Trip · 새로운 여행을 발견하는 가장 쉬운 방법</text>
+</g></svg>

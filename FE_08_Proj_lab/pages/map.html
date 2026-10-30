@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#3182f6" />
+    <meta name="description" content="지역과 관심사를 선택하고 지도에서 나만의 여행지를 찾아보세요." />
+    <title>Enjoy Trip · 관광지 탐색</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+    <link rel="stylesheet" href="../css/map.css" />
+    <link rel="stylesheet" href="../css/auth-modal.css" />
+
+  </head>
+  <body class="map-page">
+    <a class="visually-hidden-focusable skip-link" href="#travel-explorer">여행지 탐색으로 바로가기</a>
+
+    <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <symbol id="icon-search" viewBox="0 0 24 24">
+        <circle cx="10.5" cy="10.5" r="6.5" />
+        <path d="m16 16 5 5" />
+      </symbol>
+      <symbol id="icon-location" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="7" />
+        <circle cx="12" cy="12" r="2.5" />
+        <path d="M12 1v3m0 16v3M1 12h3m16 0h3" />
+      </symbol>
+      <symbol id="icon-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v6m0-10v.1" />
+      </symbol>
+      <symbol id="icon-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="icon-minus" viewBox="0 0 24 24">
+        <path d="M5 12h14" />
+      </symbol>
+      <!-- [추가] 뒤로가기 화살표 아이콘 -->
+      <symbol id="icon-arrow-left" viewBox="0 0 24 24">
+        <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </symbol>
+      <symbol id="icon-order-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4M12 14v3"/></symbol>
+      <symbol id="icon-order-unlock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 7.5-2M12 14v3"/></symbol>
+    </svg>
+    <div data-include="./header.html"></div>
+
+    <main class="container-fluid map-main d-flex flex-column flex-grow-1 p-0">
+      <section id="travel-explorer" class="card explorer flex-grow-1 border-0 rounded-0" aria-labelledby="explorer-title" tabindex="-1">
+        <h1 id="explorer-title" class="visually-hidden">관광지 탐색</h1>
+
+        <div class="row g-0 explorer-body flex-grow-1">
+          <button id="sidebar-toggle" class="btn sidebar-toggle d-inline-flex align-items-center justify-content-center" type="button" data-bs-toggle="collapse" data-bs-target="#explorer-sidebar" aria-controls="explorer-sidebar" aria-expanded="true" aria-label="여행 탐색 메뉴 접기" title="메뉴 접기">
+            <svg class="icon" aria-hidden="true"><path d="m14 6-6 6 6 6" /></svg>
+            <span class="sidebar-toggle-label">메뉴 접기</span>
+          </button>
+          <div id="explorer-sidebar" class="sidebar-panel collapse collapse-horizontal show">
+            <aside class="col-12 col-lg-auto filters d-flex flex-row p-0" aria-label="여행 탐색 메뉴">
+              <!-- 1. 좌측 세로 메뉴 전환 버튼 (Nav) -->
+              <div class="sidebar-tabs nav flex-column nav-pills me-0" id="sidebar-tab" role="tablist" aria-orientation="vertical">
+                <button class="nav-link active d-flex flex-column align-items-center justify-content-center py-3 px-2 border-0 rounded-0"
+                        id="tab-search-btn"
+                        data-bs-toggle="pill"
+                        data-bs-target="#tab-search"
+                        type="button"
+                        role="tab"
+                        aria-controls="tab-search"
+                        aria-selected="true"
+                        title="여행지 검색">
+                  <svg class="icon mb-1" aria-hidden="true" style="width: 20px; height: 20px;"><use href="#icon-search" /></svg>
+                  <span class="tab-label">검색</span>
+                </button>
+                <button class="nav-link d-flex flex-column align-items-center justify-content-center py-3 px-2 border-0 rounded-0"
+                        id="tab-results-btn"
+                        data-bs-toggle="pill"
+                        data-bs-target="#tab-results"
+                        type="button"
+                        role="tab"
+                        aria-controls="tab-results"
+                        aria-selected="false"
+                        title="검색 결과 목록">
+                  <img class="search-results-tab-icon mb-1" src="../resources/icons/search-results-list.svg" width="20" height="20" alt="" />
+                  <span class="tab-label">검색 결과</span>
+                </button>
+                <button class="nav-link d-flex flex-column align-items-center justify-content-center py-3 px-2 border-0 rounded-0"
+                        id="tab-plan-btn"
+                        data-bs-toggle="pill"
+                        data-bs-target="#tab-plan"
+                        type="button"
+                        role="tab"
+                        aria-controls="tab-plan"
+                        aria-selected="false"
+                        title="저장된 계획 조회">
+                  <svg class="icon mb-1" aria-hidden="true" style="width: 20px; height: 20px;"><use href="#icon-location" /></svg>
+                  <span class="tab-label">계획</span>
+                </button>
+              </div>
+
+              <!-- 2. 우측 토글 컨텐츠 영역 (Tab Content) -->
+              <div class="tab-content flex-grow-1 p-3 p-lg-4" id="sidebar-tabContent">
+
+                <!-- [메뉴 1] 여행지 검색 패널 -->
+                <div class="tab-pane fade show active" id="tab-search" role="tabpanel" aria-labelledby="tab-search-btn" tabindex="0">
+                  <div class="filter-fields">
+                    <fieldset class="filter-group region-group mb-4">
+                      <legend class="d-flex align-items-center gap-2 mb-3"><span class="step-number d-inline-flex align-items-center justify-content-center">1</span> 어디로 떠나시나요?</legend>
+                      <div class="row gx-3 region-fields">
+                        <div class="col-6 field">
+                          <label class="form-label" for="selectSido">시/도 선택</label>
+                          <select class="form-select" id="selectSido" data-type="시/도" disabled>
+                            <option value="" selected disabled>시/도 선택</option>
+                          </select>
+                        </div>
+                        <div class="col-6 field">
+                          <label class="form-label" for="selectGugun">구/군 선택</label>
+                          <select class="form-select" id="selectGugun" data-type="구/군" disabled>
+                            <option value="" selected disabled>구/군 선택</option>
+                          </select>
+                        </div>
+                      </div>
+                    </fieldset>
+
+                    <fieldset class="filter-group category-group mb-4">
+                      <legend class="d-flex align-items-center gap-2 mb-3"><span class="step-number d-inline-flex align-items-center justify-content-center">2</span> 어떤 여행을 원하시나요?</legend>
+                      <div class="row g-3">
+                        <div class="col-12 field">
+                          <label class="form-label" for="selectClass1">대분류</label>
+                          <select class="form-select" id="selectClass1" data-type="대분류" disabled>
+                            <option value="" selected disabled>대분류 선택</option>
+                          </select>
+                        </div>
+                        <div class="col-12 field">
+                          <label class="form-label" for="selectClass2">중분류</label>
+                          <select class="form-select" id="selectClass2" data-type="중분류" disabled>
+                            <option value="" selected disabled>중분류 선택</option>
+                          </select>
+                        </div>
+                        <div class="col-12 field">
+                          <label class="form-label" for="selectClass3">소분류</label>
+                          <select class="form-select" id="selectClass3" data-type="소분류" disabled>
+                            <option value="" selected disabled>소분류 선택</option>
+                          </select>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+
+                  <div class="row g-2 search-actions">
+                    <div class="col-12">
+                      <button id="btn_trip_search" class="btn btn-primary search-button w-100 d-inline-flex align-items-center justify-content-center" type="button" disabled>
+                        <svg class="icon me-2" aria-hidden="true"><use href="#icon-search" /></svg>
+                        검색하기
+                      </button>
+                    </div>
+                    <div class="col-12">
+                      <button id="btn_around_search" class="btn btn-secondary search-button w-100 d-inline-flex align-items-center justify-content-center" type="button" aria-describedby="nearby-help" disabled>
+                        <svg class="icon me-2" aria-hidden="true"><use href="#icon-location" /></svg>
+                        내 주변 검색
+                      </button>
+                    </div>
+                  </div>
+                  <p id="nearby-help" class="small text-secondary mt-2 mb-0">현재 위치 기준 반경 2km 이내의 관광지를 검색합니다.</p>
+                </div>
+
+                <div class="tab-pane fade" id="tab-results" role="tabpanel" aria-labelledby="tab-results-btn" tabindex="0">
+                  <div class="search-results-panel d-flex flex-column">
+                    <h2 class="search-results-title">검색 결과</h2>
+                    <p id="search-results-summary" class="search-results-summary" role="status" aria-live="polite" aria-atomic="true">검색한 관광지를 여기에서 확인할 수 있어요.</p>
+                    <p id="search-results-filters" class="search-results-filters align-self-start" hidden></p>
+                    <hr class="search-results-divider" />
+                    <div id="search-results-sort" class="search-results-sort d-flex gap-1" role="group" aria-label="검색 결과 정렬" hidden>
+                      <button class="btn flex-fill" type="button" data-sort="name" aria-pressed="true">이름 순</button>
+                      <button class="btn flex-fill" type="button" data-sort="distance" aria-pressed="false">거리 순</button>
+                      <button class="btn flex-fill" type="button" data-sort="registered" aria-pressed="false">등록 순</button>
+                    </div>
+                    <div id="search-results-body" aria-busy="false">
+                      <ul id="search-results-list" class="list-group list-group-flush search-results-list" aria-label="검색된 관광지"></ul>
+                      <p id="search-results-empty" class="search-results-empty">검색 탭에서 지역과 분류를 선택하거나 내 주변 검색을 눌러주세요.</p>
+                    </div>
+                    <p id="search-results-hint" class="search-results-hint" hidden>목록이나 지도에서 장소를 선택하면<br />자세한 정보를 확인할 수 있어요.</p>
+                    <p id="search-results-sort-help" class="search-results-hint" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+                  </div>
+                </div>
+
+                <!-- [메뉴 3] 저장된 계획 조회 패널 -->
+                <div class="tab-pane fade" id="tab-plan" role="tabpanel" aria-labelledby="tab-plan-btn" tabindex="0">
+
+                  <!-- Depth 1: 저장된 계획 목록 화면 -->
+                  <div id="plan-depth-list" class="plan-depth collapse show" data-bs-parent="#tab-plan">
+                    <div class="plan-header mb-3">
+                      <h2 class="h6 fw-bold mb-1">저장된 여행 계획</h2>
+                      <p class="small text-secondary mb-0">이전에 작성해둔 나의 여행 일정을 조회합니다.</p>
+                    </div>
+
+                    <!-- 저장된 계획 리스트 영역 -->
+                    <div class="saved-plan-list d-flex flex-column gap-2" id="saved-plan-list"></div>
+                    <button id="btn-create-plan" class="btn card plan-create-card collapsed w-100 d-flex flex-column align-items-center gap-2 mt-3 p-3" type="button" data-bs-toggle="collapse" data-bs-target="#plan-depth-create" aria-expanded="false" aria-controls="plan-depth-create">
+                      <span class="plan-create-icon d-inline-flex align-items-center justify-content-center" aria-hidden="true">
+                        <svg class="icon"><path d="M12 5v14M5 12h14" /></svg>
+                      </span>
+                      <span class="fw-bold">여행 계획 생성</span>
+                      <span class="small text-secondary">이름과 날짜로 새 여행을 시작해요.</span>
+                    </button>
+                  </div>
+
+                  <div id="plan-depth-create" class="plan-depth collapse" data-bs-parent="#tab-plan">
+                    <button class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#plan-depth-list" aria-expanded="true" aria-controls="plan-depth-list">
+                      <svg class="icon" aria-hidden="true"><use href="#icon-arrow-left" /></svg>
+                      목록
+                    </button>
+                    <h2 class="h6 fw-bold mb-2">여행 계획 생성</h2>
+                    <p class="small text-secondary mb-4">여행 이름과 떠날 날짜를 정해주세요.</p>
+                    <form id="plan-create-form" class="plan-create-form" novalidate>
+                      <div class="field mb-3">
+                        <label class="form-label" for="plan-title">여행 이름</label>
+                        <input class="form-control" id="plan-title" name="title" type="text" maxlength="80" placeholder="예: 제주에서 보내는 주말" required />
+                      </div>
+                      <div class="field mb-4">
+                        <label class="form-label" for="plan-date">여행 날짜</label>
+                        <input class="form-control" id="plan-date" name="date" type="date" required />
+                      </div>
+                      <p id="plan-create-error" class="small text-danger mb-3" role="alert" hidden></p>
+                      <button class="btn btn-primary w-100" type="submit">계획 만들기</button>
+                      <button class="btn btn-secondary w-100 mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#plan-depth-list" aria-expanded="true" aria-controls="plan-depth-list">취소</button>
+                    </form>
+                  </div>
+
+                  <!-- Depth 2: 계획 상세 보기 화면 (기본 숨김) -->
+                  <div id="plan-depth-detail" class="plan-depth d-none">
+                    <div class="plan-detail-heading d-flex flex-column align-items-start">
+                      <button type="button" class="btn btn-sm btn-outline-secondary plan-back" id="btn-plan-back">← 목록</button>
+                      <h2 class="plan-detail-title w-100 text-truncate" id="detail-plan-title">계획 상세</h2>
+                      <p class="plan-detail-meta" id="detail-plan-meta"></p>
+                    </div>
+                    <div class="plan-route-info d-flex flex-column align-items-start">
+                      <span class="plan-route-label">🚗 이동 경로</span>
+                      <span class="plan-route-badge" id="plan-route-mode">카카오내비 자동차 경로</span>
+                    </div>
+                    <div class="detail-places-header">
+                      <h3 class="plan-visits-title">방문 순서 및 일정</h3>
+                    </div>
+                    <button class="btn plan-optimize-button w-100" type="button" id="btn-optimize-plan" disabled>최단 경로 순서</button>
+                    <p class="visually-hidden" id="plan-reorder-help">손잡이를 드래그하거나 위아래 방향키, Home, End 키로 순서를 바꿀 수 있습니다. 잠근 장소는 현재 방문 번호를 유지합니다. 자동 정렬은 직선거리를 기준으로 하며 출발지로 복귀하지 않습니다.</p>
+                    <div id="detail-place-list" class="d-flex flex-column gap-2" role="list" aria-label="방문 순서"></div>
+                    <p id="plan-detail-status" class="small text-secondary mt-2 mb-0" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+                  </div>
+
+                </div>
+
+              </div>
+            </aside>
+          </div>
+
+          <section class="col-12 col-lg map-region position-relative p-0" aria-label="관광지 지도" tabindex="-1">
+            <div id="map"></div>
+            <div id="map-state" class="map-state position-absolute d-flex flex-column align-items-center justify-content-center gap-3 text-center" role="status">
+              <span class="spinner-border loading-spinner" aria-hidden="true"></span>
+              <p id="map-state-message">여행 지도를 준비하고 있어요</p>
+            </div>
+            <div class="map-result position-absolute d-flex align-items-center" role="status" aria-live="polite" aria-atomic="true">
+              <span class="status-dot" aria-hidden="true"></span>
+              <span id="map-result-label">지역과 분류를 선택해보세요</span>
+            </div>
+            <div id="map-controls" class="map-controls position-absolute d-grid" hidden>
+              <div class="btn-group-vertical zoom-controls" role="group" aria-label="지도 확대·축소">
+                <button id="map-zoom-in" class="btn btn-light map-control d-inline-flex align-items-center justify-content-center" type="button" aria-label="지도 확대">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-plus" /></svg>
+                </button>
+                <button id="map-zoom-out" class="btn btn-light map-control d-inline-flex align-items-center justify-content-center" type="button" aria-label="지도 축소">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-minus" /></svg>
+                </button>
+              </div>
+              <button id="map-fit-markers" class="btn btn-light map-control fit-control d-inline-flex align-items-center justify-content-center" type="button" aria-label="모든 표시 장소 보기">
+                <svg class="icon" aria-hidden="true"><use href="#icon-location" /></svg>
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <div id="search-feedback" class="alert alert-primary rounded-0 border-0 border-top m-0 px-4 py-3" role="status" aria-live="polite" aria-atomic="true" hidden>
+          <p id="search-feedback-message"></p>
+          <div id="map-search-fallback" class="mt-2" hidden>
+            <p class="small mb-2">원하는 지역으로 지도를 이동하고 확대한 뒤 아래 버튼을 눌러주세요.</p>
+            <button id="btn_map_search" class="btn btn-secondary search-button" type="button" disabled>현재 지도 중심으로 조회</button>
+          </div>
+        </div>
+
+      </section>
+
+      <noscript><p class="noscript-message">지도를 보려면 브라우저에서 JavaScript를 활성화해주세요.</p></noscript>
+    </main>
+
+    <div id="tour-detail-modal" class="offcanvas offcanvas-end tour-detail-modal" tabindex="-1" aria-labelledby="tour-detail-title">
+      <button class="btn tour-detail-close d-inline-flex align-items-center justify-content-center" type="button" data-bs-dismiss="offcanvas" aria-label="관광지 세부 정보 닫기">
+        <img src="../resources/icons/detail-close.svg" width="16" height="16" alt="" />
+      </button>
+      <div id="tour-detail-content" class="offcanvas-body tour-detail-content" aria-busy="false">
+        <img id="tour-detail-image" class="tour-detail-image is-placeholder" src="../resources/img/placeholder.png" width="291" height="196" alt="등록된 사진이 없습니다" />
+        <div class="tour-detail-inner d-flex flex-column">
+          <header class="tour-detail-heading">
+            <h2 id="tour-detail-title">관광지 세부 정보</h2>
+            <p id="tour-detail-category" class="tour-detail-text" hidden></p>
+          </header>
+          <div id="tour-detail-status" class="tour-detail-status" role="status" aria-live="polite" hidden>
+            <div class="d-flex align-items-start gap-2">
+              <span id="tour-detail-spinner" class="spinner-border spinner-border-sm flex-shrink-0 mt-1" aria-hidden="true" hidden></span>
+              <p id="tour-detail-message"></p>
+            </div>
+            <button id="tour-detail-retry" class="btn btn-secondary btn-sm mt-2" type="button" hidden>다시 불러오기</button>
+          </div>
+          <section id="tour-detail-weather" class="tour-detail-weather" aria-labelledby="tour-weather-title" hidden>
+            <div class="tour-weather-heading">
+              <h3 id="tour-weather-title" class="tour-detail-section-title">이 위치의 현재 날씨</h3>
+              <span id="tour-weather-time" class="tour-weather-time"></span>
+            </div>
+            <div id="tour-weather-status" class="tour-weather-status" role="status" aria-live="polite">
+              날씨 정보를 불러오고 있어요.
+            </div>
+            <div id="tour-weather-content" hidden>
+              <div class="tour-weather-summary">
+                <span id="tour-weather-icon" class="tour-weather-icon" aria-hidden="true">🌡️</span>
+                <div>
+                  <strong><span id="tour-weather-temperature">-</span>°</strong>
+                  <p id="tour-weather-condition">-</p>
+                </div>
+              </div>
+              <dl class="tour-weather-metrics">
+                <div><dt>습도</dt><dd><span id="tour-weather-humidity">-</span>%</dd></div>
+                <div><dt>강수량</dt><dd id="tour-weather-rainfall">-</dd></div>
+                <div><dt>바람</dt><dd><span id="tour-weather-direction">-</span> <span id="tour-weather-wind-speed">-</span>m/s</dd></div>
+              </dl>
+              <p class="tour-weather-source">기상청 초단기실황</p>
+            </div>
+          </section>
+          <hr class="tour-detail-divider" />
+          <section aria-labelledby="tour-overview-title">
+            <h3 id="tour-overview-title" class="tour-detail-section-title">이곳은 어떤 곳인가요?</h3>
+            <p id="tour-detail-overview" class="tour-detail-text"></p>
+          </section>
+          <section aria-labelledby="tour-visit-title">
+            <h3 id="tour-visit-title" class="tour-detail-section-title">방문 정보</h3>
+            <dl id="tour-detail-visit" class="tour-detail-rows mb-0"></dl>
+            <p id="tour-detail-visit-empty" class="tour-detail-text" hidden>등록된 방문 정보가 없습니다.</p>
+          </section>
+          <section id="tour-detail-extra" aria-labelledby="tour-extra-title" hidden>
+            <h3 id="tour-extra-title" class="tour-detail-section-title">상세 안내</h3>
+            <div id="tour-detail-extra-content" class="d-flex flex-column gap-3"></div>
+          </section>
+          <section id="tour-detail-gallery" aria-labelledby="tour-gallery-title" hidden>
+            <h3 id="tour-gallery-title" class="tour-detail-section-title">사진</h3>
+            <div id="tour-detail-photos" class="tour-detail-photos d-flex gap-2"></div>
+          </section>
+        </div>
+      </div>
+      <div class="tour-detail-actions d-flex flex-column flex-shrink-0">
+        <button id="btn_add_to_route" class="btn btn-primary tour-detail-add-route w-100 d-inline-flex align-items-center justify-content-center" type="button" aria-expanded="false" aria-controls="tour-plan-picker">
+          <img src="../resources/icons/detail-plus.svg" width="16" height="16" alt="" aria-hidden="true" />
+          여행 계획에 추가
+        </button>
+        <form id="tour-plan-picker" class="tour-plan-picker" novalidate hidden>
+          <label class="form-label small fw-bold" for="tour-plan-select">어느 여행 계획에 추가할까요?</label>
+          <select id="tour-plan-select" class="form-select form-select-sm" required></select>
+          <div class="d-flex gap-2 mt-2">
+            <button class="btn btn-primary flex-grow-1" type="submit">선택한 계획에 추가</button>
+            <button id="tour-plan-cancel" class="btn btn-secondary" type="button">취소</button>
+          </div>
+        </form>
+        <p id="tour-detail-plan-status" class="small text-secondary text-break mb-0" role="status" aria-live="polite" hidden></p>
+        <p id="tour-detail-credit" class="tour-detail-credit text-center" hidden>사진·정보 한국관광공사 VISITKOREA</p>
+      </div>
+    </div>
+
+    <footer id="page-footer" class="position-relative flex-shrink-0">
+      <div class="explorer-footer d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <p class="map-hint d-flex align-items-start align-items-sm-center">
+          <svg class="icon" aria-hidden="true"><use href="#icon-info" /></svg>
+          <span id="map-help">숫자를 누르면 지도가 확대돼요. 마커에 마우스를 올리면 이름을, 클릭하면 상세 창을 확인할 수 있어요.</span>
+        </p>
+        <nav class="resource-links d-flex align-items-center gap-4 gap-xl-5" aria-label="데이터 제공 사이트">
+          <a href="https://apis.map.kakao.com/web/" target="_blank" rel="noopener noreferrer">카카오맵 API <span aria-hidden="true">↗</span><span class="visually-hidden"> (새 탭)</span></a>
+          <a href="https://www.data.go.kr/index.do" target="_blank" rel="noopener noreferrer">공공데이터 <span aria-hidden="true">↗</span><span class="visually-hidden"> (새 탭)</span></a>
+        </nav>
+      </div>
+      <p class="site-footer">Enjoy Trip · 새로운 여행을 발견하는 가장 쉬운 방법</p>
+      <button id="close-page-footer" class="btn-close footer-close position-absolute top-0 end-0" type="button" aria-label="하단 안내 닫기" title="하단 안내 닫기"></button>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="../js/sidebar.js"></script>
+    <script type="module" src="../js/tour-detail.js?v=20261002-api"></script>
+
+    <script>
+      // 지도 API 로딩 상태와 관계없이 푸터를 닫을 수 있습니다.
+      document.getElementById("close-page-footer").addEventListener("click", () => {
+        document.getElementById("page-footer").hidden = true;
+        document.getElementById("travel-explorer").focus({ preventScroll: true });
+      });
+    </script>
+
+    <script type="module">
+      // 조회와 분류 연동은 기존 모듈을 사용하고, 이 페이지에서는 UI 초기화만 담당합니다.
+      import { loadIncludes } from "../js/layout.js";
+      import { loadKakaoMap, initMap, updateMap, map, markers } from "../js/kakao.js";
+      import { initEnjoyTrip } from "../js/map.js";
+      import { initSearchResults } from "../js/search-results.js";
+      import {initAuthModals} from "../js/auth/auth-modal.js";
+      import {initAuthState} from "../js/auth/auth-state.js";
+      import {initAuthForms} from "../js/auth/auth-form.js";
+      
+      initSearchResults();
+      await loadIncludes();
+      initAuthModals();
+      initAuthState();
+      initAuthForms();
+
+      const defaultPositions = [
+        { address: "서울특별시 강남구 테헤란로 212", label: "서울캠퍼스" },
+        { address: "경북 구미시 3공단 3로 302", label: "구미캠퍼스" },
+        { address: "부산광역시 강서구 송정동 녹산산업중로 333", label: "부울경캠퍼스" },
+        { address: "광주광역시 광산구 하남산단 6번로 107", label: "광주캠퍼스" },
+        { address: "대전광역시 유성구 동서대로 98-39", label: "대전캠퍼스" },
+      ];
+
+      const sido = document.getElementById("selectSido");
+      const mapState = document.getElementById("map-state");
+      const mapControls = document.getElementById("map-controls");
+      const resultLabel = document.getElementById("map-result-label");
+      const searchFeedback = document.getElementById("search-feedback");
+      let isSearching = false;
+      let searchScope = "";
+      let searchError = "";
+
+      function updateResultLabel() {
+        if (isSearching) return;
+        const result = markers.length ? `지도에 표시된 장소 ${markers.length.toLocaleString()}곳` : "조회된 장소가 없어요";
+        resultLabel.textContent = searchError || (searchScope ? `${searchScope} · ${result}` : result);
+      }
+
+      document.addEventListener("enjoytrip:map-updated", updateResultLabel);
+      document.addEventListener("enjoytrip:search-state", ({ detail }) => {
+        isSearching = detail.phase === "loading" || detail.phase === "locating";
+        document.querySelector(".map-region").setAttribute("aria-busy", String(isSearching));
+        searchFeedback.hidden = !detail.notice;
+        document.getElementById("search-feedback-message").textContent = detail.notice || "";
+        document.getElementById("map-search-fallback").hidden = !detail.offerMapSearch;
+        if (isSearching) searchError = "";
+        if (detail.phase === "locating") {
+          resultLabel.textContent = "현재 위치를 확인하는 중이에요…";
+        } else if (detail.phase === "loading") {
+          const loaded = detail.loaded.toLocaleString();
+          resultLabel.textContent = detail.total == null ? `관광지를 불러오는 중 · ${loaded}곳` : `관광지를 불러오는 중 · ${loaded} / ${detail.total.toLocaleString()}곳`;
+        } else if (detail.phase === "error") {
+          searchError = detail.message || "조회에 실패했어요. 다시 시도해주세요";
+          updateResultLabel();
+        } else {
+          searchScope = detail.scope || "";
+          updateResultLabel();
+        }
+      });
+
+      document.getElementById("map-zoom-in").addEventListener("click", () => map.setLevel(Math.max(1, map.getLevel() - 1)));
+      document.getElementById("map-zoom-out").addEventListener("click", () => map.setLevel(Math.min(14, map.getLevel() + 1)));
+      document.getElementById("map-fit-markers").addEventListener("click", () => {
+        if (!markers.length) return;
+        const bounds = new kakao.maps.LatLngBounds();
+        markers.forEach((marker) => bounds.extend(marker.getPosition()));
+        map.setBounds(bounds);
+      });
+
+      loadKakaoMap().then(async () => {
+        initMap("map");
+        kakao.maps.event.addListener(map, "idle", updateResultLabel);
+        // 화면 크기가 바뀌어도 지도 중심과 마커 표시를 유지합니다.
+        const resizeObserver = new ResizeObserver(() => {
+          const center = map.getCenter();
+          map.relayout();
+          map.setCenter(center);
+        });
+        resizeObserver.observe(document.getElementById("map"));
+
+        await Promise.all([updateMap(defaultPositions), initEnjoyTrip()]);
+        mapState.hidden = true;
+        mapControls.hidden = false;
+        updateResultLabel();
+        document.getElementById("btn_trip_search").disabled = false;
+        document.getElementById("btn_around_search").disabled = false;
+
+        if (sido.disabled || document.getElementById("selectClass1").disabled) {
+          document.getElementById("map-help").textContent = "일부 검색 조건을 불러오지 못했어요. 페이지를 새로고침해 다시 시도해주세요.";
+        }
+      }).catch((error) => {
+        console.error(error);
+        mapState.classList.add("is-error");
+        mapState.setAttribute("role", "alert");
+        document.getElementById("map-state-message").textContent = "지도를 불러오지 못했어요. 연결 상태를 확인하고 새로고침해주세요.";
+        resultLabel.textContent = "지도를 불러올 수 없어요";
+      });
+    </script>
+  </body>
+</html>

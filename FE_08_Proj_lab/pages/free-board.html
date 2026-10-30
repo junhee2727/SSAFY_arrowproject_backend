@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#3182f6" />
+    <meta name="description" content="여행 이야기와 유용한 정보를 자유롭게 나누는 푸른 하늘 여행 게시판입니다." />
+    <title>푸른 하늘 여행 · 자유 게시판</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/map.css" />
+    <link rel="stylesheet" href="../css/auth-modal.css" />
+    <link rel="stylesheet" href="../css/board.css" />
+  </head>
+  <body class="free-board-page">
+    <a class="visually-hidden-focusable skip-link" href="#free-board">자유 게시판 목록으로 바로가기</a>
+    <div data-include="./header.html"></div>
+
+    <main class="board-main">
+      <section class="board-hero" aria-labelledby="free-board-title">
+        <div>
+          <p class="board-eyebrow">여행자들의 이야기</p>
+          <h1 class="board-title" id="free-board-title">자유 게시판</h1>
+          <p class="board-description">여행 후기와 질문, 나만 알고 싶은 장소를 자유롭게 나눠보세요.</p>
+        </div>
+        <a class="board-write-button" id="free-board-write-button" href="./free-board-write.html">글쓰기</a>
+      </section>
+
+      <section class="board-panel" id="free-board" aria-label="자유 게시판 목록" tabindex="-1">
+        <div class="board-toolbar">
+          <p class="board-count">전체 <strong id="free-board-count">0</strong>건</p>
+          <form class="board-search" id="free-board-search-form" role="search">
+            <label class="visually-hidden" for="free-board-search-type">검색 범위</label>
+            <select class="form-select" id="free-board-search-type" name="type">
+              <option value="all">제목+내용</option>
+              <option value="title">제목</option>
+              <option value="author">작성자</option>
+            </select>
+            <label class="visually-hidden" for="free-board-search-keyword">게시글 검색어</label>
+            <input class="form-control" id="free-board-search-keyword" name="keyword" type="search" placeholder="여행 이야기를 검색하세요" />
+            <button class="board-search-button" type="submit">검색</button>
+          </form>
+        </div>
+
+        <div class="board-table-wrap">
+          <table class="board-table">
+            <caption class="visually-hidden">자유 게시판 번호, 분류, 제목, 작성자, 작성일, 조회수 목록</caption>
+            <colgroup>
+              <col style="width: 70px" />
+              <col style="width: 92px" />
+              <col />
+              <col style="width: 110px" />
+              <col style="width: 120px" />
+              <col style="width: 80px" />
+            </colgroup>
+            <thead>
+              <tr><th scope="col">번호</th><th scope="col">분류</th><th scope="col">제목</th><th scope="col">작성자</th><th scope="col">작성일</th><th scope="col">조회</th></tr>
+            </thead>
+            <tbody id="free-board-body"></tbody>
+          </table>
+        </div>
+
+        <footer class="board-footer">
+          <nav aria-label="자유 게시판 페이지">
+            <ul class="board-pagination" id="free-board-pagination"></ul>
+          </nav>
+        </footer>
+      </section>
+    </main>
+
+    <div data-include="./footer.html"></div>
+    <script type="module">
+      import { loadIncludes } from "../js/layout.js";
+      import { initAuthModals } from "../js/auth/auth-modal.js";
+      import { initAuthState } from "../js/auth/auth-state.js";
+      import { initAuthForms } from "../js/auth/auth-form.js";
+      import { initFreeBoardList } from "../js/board/free-board-list.js";
+
+      await loadIncludes();
+      initAuthModals();
+      initAuthState();
+      initAuthForms();
+      initFreeBoardList();
+    </script>
+  </body>
+</html>

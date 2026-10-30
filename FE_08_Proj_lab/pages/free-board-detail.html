@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#3182f6" />
+    <meta name="description" content="푸른 하늘 여행 자유 게시판의 여행 이야기 상세 내용입니다." />
+    <title>푸른 하늘 여행 · 자유 게시판 상세</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/map.css" />
+    <link rel="stylesheet" href="../css/auth-modal.css" />
+    <link rel="stylesheet" href="../css/board.css" />
+  </head>
+  <body class="free-board-page">
+    <a class="visually-hidden-focusable skip-link" href="#free-board-detail">게시글 본문으로 바로가기</a>
+    <div data-include="./header.html"></div>
+
+    <main class="board-main">
+      <section class="board-hero" aria-labelledby="free-board-page-title">
+        <div>
+          <p class="board-eyebrow">여행자들의 이야기</p>
+          <h1 class="board-title" id="free-board-page-title"><a class="board-title-home-link" href="./free-board.html">자유 게시판</a></h1>
+          <p class="board-description">다른 여행자가 들려주는 생생한 여행 이야기를 만나보세요.</p>
+        </div>
+      </section>
+
+      <section class="board-panel board-not-found" id="free-board-not-found" hidden>
+        <h2>게시글을 찾을 수 없습니다.</h2>
+        <p>삭제되었거나 잘못된 주소로 접근했습니다.</p>
+        <a class="board-cancel-button" href="./free-board.html">목록으로</a>
+      </section>
+
+      <article class="post-detail-panel" id="free-board-detail">
+        <header class="post-detail-header">
+          <div class="post-detail-labels"><span class="board-category" id="free-board-detail-category"></span></div>
+          <h2 class="post-detail-title" id="free-board-detail-title"></h2>
+          <p class="post-meta" id="free-board-detail-meta"></p>
+        </header>
+
+        <div class="post-detail-body" id="free-board-detail-body"></div>
+        <div class="post-image-gallery" id="free-board-images" hidden></div>
+        <nav class="post-detail-navigation" id="free-board-navigation" aria-label="이전 및 다음 게시글"></nav>
+      </article>
+
+      <div class="post-detail-actions" id="free-board-detail-actions">
+        <a class="board-cancel-button" href="./free-board.html">목록으로</a>
+        <div class="post-owner-actions" id="post-owner-actions" hidden>
+          <a class="board-cancel-button" id="post-edit-button" href="./free-board-write.html">수정</a>
+          <button class="board-cancel-button post-danger-button" id="post-delete-button" type="button">삭제</button>
+        </div>
+      </div>
+
+      <section class="comment-panel" id="free-board-comments" aria-labelledby="comment-title">
+        <header class="comment-header"><h2 id="comment-title">댓글 <strong id="comment-count">0</strong></h2></header>
+        <ul class="comment-list" id="comment-list"></ul>
+        <form class="comment-form" id="comment-form">
+          <label class="visually-hidden" for="comment-content">댓글 내용</label>
+          <textarea class="form-control" id="comment-content" name="comment" rows="2" maxlength="500" placeholder="여행 이야기에 따뜻한 댓글을 남겨보세요."></textarea>
+          <button class="board-search-button comment-submit-button" type="submit">댓글 등록</button>
+        </form>
+        <p class="board-form-message comment-message" id="comment-message" role="alert" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <div data-include="./footer.html"></div>
+    <script type="module">
+      import { loadIncludes } from "../js/layout.js";
+      import { initAuthModals } from "../js/auth/auth-modal.js";
+      import { initAuthState } from "../js/auth/auth-state.js";
+      import { initAuthForms } from "../js/auth/auth-form.js";
+      import { initFreeBoardDetail } from "../js/board/free-board-detail.js";
+
+      await loadIncludes();
+      initAuthModals();
+      initAuthState();
+      initAuthForms();
+      initFreeBoardDetail();
+    </script>
+  </body>
+</html>
