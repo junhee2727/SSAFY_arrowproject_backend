@@ -9,12 +9,12 @@
 	<name>enjoytrip</name>
 	<description>backend project for SSAFY 'enjoytrip'</description>
 	<properties>
-		<jdk.version>21</jdk.version>
+		<jdk.version>25</jdk.version>
 		<maven.compiler.release>${jdk.version}</maven.compiler.release>
 		<jakarta.servlet.version>6.1.0</jakarta.servlet.version>
 		<jakarta.servlet.jsp-api.version>4.0.0</jakarta.servlet.jsp-api.version>
 		<jakarta.servlet.jsp.jstl.version>3.0.1</jakarta.servlet.jsp.jstl.version>
-		<jakarta.servlet.jsp.jstl-api.version>3.0.1</jakarta.servlet.jsp.jstl-api.version>
+		<jakarta.servlet.jsp.jstl-api.version>3.0.2</jakarta.servlet.jsp.jstl-api.version>
 		<jackson-databind.version>3.0.4</jackson-databind.version>
 	</properties>
 	<dependencies>
@@ -49,5 +49,44 @@
 			<version>${jackson-databind.version}</version>
 			<scope>compile</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.11.4</version>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
+    <build>
+        <finalName>enjoytrip</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.15.0</version>
+                <configuration><release>25</release></configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>../Frontend</directory>
+                            <excludes>
+                                <exclude>docs/**</exclude><exclude>tests/**</exclude>
+                                <exclude>AGENTS.md</exclude><exclude>.gitignore</exclude>
+                                <exclude>.DS_Store</exclude>
+                            </excludes>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
