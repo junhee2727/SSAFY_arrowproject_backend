@@ -399,20 +399,24 @@
     </script>
 
     <script type="module">
-      // 조회와 분류 연동은 기존 모듈을 사용하고, 이 페이지에서는 UI 초기화만 담당합니다.
       import { loadIncludes } from "../js/layout.js";
-      import { loadKakaoMap, initMap, updateMap, map, markers } from "../js/kakao.js";
-      import { initEnjoyTrip } from "../js/map.js";
-      import { initSearchResults } from "../js/search-results.js";
-      import {initAuthModals} from "../js/auth/auth-modal.js";
-      import {initAuthState} from "../js/auth/auth-state.js";
-      import {initAuthForms} from "../js/auth/auth-form.js";
-      
-      initSearchResults();
+      import { initAuthModals } from "../js/auth/auth-modal.js";
+      import { initAuthState } from "../js/auth/auth-state.js";
+      import { initAuthForms } from "../js/auth/auth-form.js";
+
       await loadIncludes();
       initAuthModals();
       await initAuthState();
       initAuthForms();
+    </script>
+
+    <script type="module">
+      // 조회와 분류 연동은 기존 모듈을 사용하고, 이 페이지에서는 UI 초기화만 담당합니다.
+      import { loadKakaoMap, initMap, updateMap, map, markers } from "../js/kakao.js";
+      import { initEnjoyTrip } from "../js/map.js";
+      import { initSearchResults } from "../js/search-results.js";
+      
+      initSearchResults();
 
       const defaultPositions = [
         { address: "서울특별시 강남구 테헤란로 212", label: "서울캠퍼스" },

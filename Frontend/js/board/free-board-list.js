@@ -43,7 +43,10 @@ export function initFreeBoardList() {
         link.href = `./free-board-detail.html?id=${encodeURIComponent(post.id)}`;
         link.textContent = text;
         cell.append(link);
-      } else cell.textContent = text;
+      } else {
+        cell.textContent = text;
+        if (index === 3) { cell.className = "board-author-cell"; cell.title = text; }
+      }
       item.append(cell);
     });
     return item;

@@ -29,7 +29,7 @@ const path = require("node:path");
   }
   try {
     await page.goto(`${base}/pages/free-board.html`);
-    await page.locator("#free-board-body tr").waitFor();
+    await page.locator("#free-board-body tr").first().waitFor();
     const signupButton = page.locator("[data-auth-guest] [data-modal-target=signup-modal]");
     await signupButton.click();
     await page.keyboard.press("Escape");
@@ -52,6 +52,15 @@ const path = require("node:path");
     await page.locator("#post-category").selectOption("review");
     await page.locator("#post-title").fill("UI 한글 여행 후기");
     await page.locator("#post-content").fill("첫 번째 문단\n\n<script>window.shouldNotRun=true</script>");
+    // Expire the real server session while a draft is open, then recover it.
+    assert.equal((await api("POST", "auth/logout")).status(), 204);
+    await page.locator("#free-board-write-form [type=submit]").click();
+    await page.locator("#login-modal").waitFor({ state: "visible" });
+    await page.locator("#login-email").fill(email);
+    await page.locator("#login-password").fill(password);
+    await page.locator("#login-form [type=submit]").click();
+    await page.locator("#login-modal").waitFor({ state: "hidden" });
+    assert.equal(await page.locator("#post-title").inputValue(), "UI 한글 여행 후기");
     await page.locator("#free-board-write-form [type=submit]").click();
     await page.waitForURL("**/free-board-detail.html?id=*");
     await page.locator("#free-board-detail-title").filter({ hasText: "UI 한글 여행 후기" }).waitFor();
@@ -79,7 +88,7 @@ const path = require("node:path");
       assert.equal(response.status(), 201);
     }
     await page.goto(`${base}/pages/free-board.html`);
-    await page.locator("#free-board-body tr").waitFor();
+    await page.locator("#free-board-body tr").first().waitFor();
     await page.locator("#free-board-search-keyword").fill("페이징 검증");
     await page.locator("#free-board-search-form [type=submit]").click();
     await page.waitForFunction(() => document.querySelector("#free-board-count").textContent === "8");
@@ -95,9 +104,26 @@ const path = require("node:path");
     await page.waitForFunction(() => document.querySelector("#free-board-count").textContent === "9");
     for (const width of [1440, 820, 390]) {
       await page.setViewportSize({ width, height: 1000 });
+      await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      assert.equal(await page.locator("header.site-header").count(), 1);
       await page.screenshot({ path: `${screenshots}/board-${width}.png`, fullPage: true });
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true, `board overflow at ${width}`);
     }
+    // A transient list failure must offer a working retry, not local seed data.
+    await page.route("**/api/posts?**", (route) => route.abort(), { times: 1 });
+    await page.reload();
+    await page.getByRole("button", { name: "다시 시도", exact: true }).click();
+    await page.waitForFunction(() => document.querySelector("#free-board-count").textContent === "9");
+    // Also exercise deletion through the UI, separately from account cascade.
+    const temporary = await api("POST", "posts", { category: "free", title: "삭제 버튼 검증", content: "삭제할 글" });
+    const temporaryId = (await temporary.json()).data.id;
+    await page.goto(`${base}/pages/free-board-detail.html?id=${temporaryId}`);
+    await page.locator("#post-owner-actions").waitFor({ state: "visible" });
+    page.once("dialog", (dialog) => dialog.accept());
+    await page.locator("#post-delete-button").click();
+    await page.waitForURL("**/free-board.html");
+    await page.locator("#free-board-body tr").first().waitFor();
+    assert.equal((await api("GET", `posts/${temporaryId}`)).status(), 404);
     await page.locator(".my-page-link").click();
     await page.locator("#my-page-content").waitFor({ state: "visible" });
     await page.locator("#profile-name").fill("이름변경여행자");
@@ -106,6 +132,8 @@ const path = require("node:path");
     assert.equal(await page.locator("[data-user-name]").innerText(), "이름변경여행자");
     for (const width of [1440, 820, 390]) {
       await page.setViewportSize({ width, height: 1000 });
+      await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      assert.equal(await page.locator("header.site-header").count(), 1);
       await page.screenshot({ path: `${screenshots}/profile-${width}.png`, fullPage: true });
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true, `profile overflow at ${width}`);
     }
@@ -122,9 +150,17 @@ const path = require("node:path");
     assert.equal((await api("GET", `posts/${postId}`)).status(), 404);
     assert.equal((await api("GET", "members/me")).status(), 401);
     await page.goto(`${base}/pages/free-board.html`);
-    await page.locator("#free-board-body tr").waitFor();
+    await page.locator("#free-board-body tr").first().waitFor();
     assert.equal(await page.locator("#free-board-count").innerText(), "0");
     assert.deepEqual(errors, []);
+    // A missing tourism config must not prevent member controls on the map.
+    await page.route("**/config.env", (route) => route.fulfill({ status: 200, contentType: "text/plain", body: "" }));
+    await page.goto(`${base}/pages/map.html`);
+    await page.locator("[data-auth-guest]").waitFor({ state: "visible" });
+    await page.locator("[data-modal-target=signup-modal]").first().click();
+    await page.locator("#signup-modal").waitFor({ state: "visible" });
+    await page.keyboard.press("Escape");
+    await page.locator("#signup-modal").waitFor({ state: "hidden" });
     console.log("PASS: browser signup/login, keyboard focus, create/edit, session reload, cross-browser visibility, search/paging, rename/logout/delete and 1440/820/390 layouts");
   } finally {
     if (!deleted) {

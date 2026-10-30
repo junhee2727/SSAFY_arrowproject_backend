@@ -697,3 +697,10 @@
   .board-page-link { transition: none; }
   .post-image-link img { transition: none; }
 }
+
+/* Keep long author names readable without wrapping a single syllable. */
+.board-author-cell {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
