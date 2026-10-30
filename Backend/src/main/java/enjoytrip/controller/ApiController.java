@@ -18,6 +18,9 @@ import tools.jackson.databind.json.JsonMapper;
 
 public abstract class ApiController extends HttpServlet {
     private static final int MAX_BODY = 65_536;
+    private static final Set<String> FRONTEND_ORIGINS = Set.of("http://127.0.0.1:5500", "http://localhost:5500");
+    private static final Set<String> CORS_METHODS = Set.of("GET", "POST", "PUT", "DELETE", "HEAD");
+    private static final Set<String> CORS_HEADERS = Set.of("accept", "content-type", "x-requested-with");
     private static final JsonMapper JSON = JsonMapper.builder()
             .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS).build();
@@ -29,8 +32,14 @@ public abstract class ApiController extends HttpServlet {
         res.setContentType("application/json;charset=UTF-8");
         res.setHeader("Cache-Control", "no-store");
         res.setHeader("X-Content-Type-Options", "nosniff");
+        res.setHeader("Vary", "Origin, Access-Control-Request-Method, Access-Control-Request-Headers");
         try {
-            if (!Set.of("GET", "HEAD", "OPTIONS").contains(req.getMethod())) checkOrigin(req);
+            configureCors(req, res);
+            if ("OPTIONS".equals(req.getMethod())) {
+                preflight(req, res);
+                return;
+            }
+            if (!Set.of("GET", "HEAD").contains(req.getMethod())) checkOrigin(req);
             handle(req, res);
         } catch (ApiException e) {
             error(res, e.status(), e.code(), e.getMessage());
@@ -42,16 +51,38 @@ public abstract class ApiController extends HttpServlet {
         }
     }
     protected abstract void handle(HttpServletRequest req, HttpServletResponse res) throws IOException;
+    private void configureCors(HttpServletRequest req, HttpServletResponse res) {
+        String origin = req.getHeader("Origin");
+        if (origin == null) return;
+        if (!FRONTEND_ORIGINS.contains(origin) && !isSameOrigin(req, origin)) forbidden();
+        res.setHeader("Access-Control-Allow-Origin", origin);
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+    }
+    private boolean isSameOrigin(HttpServletRequest req, String origin) {
+        try {
+            URI uri = URI.create(origin);
+            int port = uri.getPort() < 0 ? ("https".equals(uri.getScheme()) ? 443 : 80) : uri.getPort();
+            return uri.getRawUserInfo() == null && uri.getRawQuery() == null && uri.getRawFragment() == null
+                    && (uri.getRawPath() == null || uri.getRawPath().isEmpty())
+                    && req.getScheme().equals(uri.getScheme()) && req.getServerName().equalsIgnoreCase(uri.getHost())
+                    && req.getServerPort() == port;
+        } catch (IllegalArgumentException e) { return false; }
+    }
+    private void preflight(HttpServletRequest req, HttpServletResponse res) {
+        String method = req.getHeader("Access-Control-Request-Method");
+        if (req.getHeader("Origin") == null || method == null || !CORS_METHODS.contains(method)) forbidden();
+        String headers = req.getHeader("Access-Control-Request-Headers");
+        if (headers != null) {
+            for (String header : headers.split(",")) {
+                if (!CORS_HEADERS.contains(header.trim().toLowerCase(java.util.Locale.ROOT))) forbidden();
+            }
+        }
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, HEAD, OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Accept, Content-Type, X-Requested-With");
+        res.setStatus(204);
+    }
     private void checkOrigin(HttpServletRequest req) {
         if (!"EnjoyTrip".equals(req.getHeader("X-Requested-With"))) forbidden();
-        String origin = req.getHeader("Origin");
-        if (origin != null) {
-            try {
-                URI uri = URI.create(origin);
-                int port = uri.getPort() < 0 ? ("https".equals(uri.getScheme()) ? 443 : 80) : uri.getPort();
-                if (!req.getScheme().equals(uri.getScheme()) || !req.getServerName().equalsIgnoreCase(uri.getHost()) || req.getServerPort() != port) forbidden();
-            } catch (IllegalArgumentException e) { forbidden(); }
-        }
         if ("cross-site".equals(req.getHeader("Sec-Fetch-Site"))) forbidden();
     }
     private void forbidden() { throw new ApiException(403, "FORBIDDEN", "허용되지 않은 요청입니다."); }

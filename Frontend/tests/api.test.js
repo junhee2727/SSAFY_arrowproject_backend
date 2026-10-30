@@ -3,10 +3,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
-function client(fetch) {
+function client(fetch, moduleUrl = "http://localhost:8080/enjoytrip/js/api.js") {
   const events = [];
   const source = readFileSync(new URL("../js/api.js", import.meta.url), "utf8")
-    .replaceAll("import.meta.url", '"http://localhost:8081/enjoytrip/js/api.js"')
+    .replaceAll("import.meta.url", JSON.stringify(moduleUrl))
     .replace("export class", "class")
     .replace("export async function", "async function");
   const context = { URL, fetch, document: { dispatchEvent: (event) => events.push(event.type) }, CustomEvent: class { constructor(type) { this.type = type; } } };
@@ -15,7 +15,7 @@ function client(fetch) {
   return { request: context.request, events };
 }
 
-test("API calls retain the WAR context and send same-origin session credentials", async () => {
+test("API calls retain the WAR context and include session credentials", async () => {
   let received;
   const { request } = client(async (url, options) => {
     received = { url: String(url), options };
@@ -23,11 +23,29 @@ test("API calls retain the WAR context and send same-origin session credentials"
   });
   const user = await request("members/register", { method: "POST", body: { name: "한글" } });
   assert.equal(user.id, "member-1");
-  assert.equal(received.url, "http://localhost:8081/enjoytrip/api/members/register");
-  assert.equal(received.options.credentials, "same-origin");
+  assert.equal(received.url, "http://localhost:8080/enjoytrip/api/members/register");
+  assert.equal(received.options.credentials, "include");
   assert.equal(received.options.headers["X-Requested-With"], "EnjoyTrip");
   assert.equal(JSON.parse(received.options.body).name, "한글");
 });
+
+for (const moduleUrl of [
+  "http://127.0.0.1:5500/js/api.js",
+  "http://127.0.0.1:5500/Frontend/js/api.js",
+  "http://localhost:5500/js/api.js",
+]) {
+  test(`Live Server ${moduleUrl} uses Tomcat on the same hostname with session cookies`, async () => {
+    let received;
+    const { request } = client(async (url, options) => {
+      received = { url: String(url), options };
+      return { status: 200, ok: true, json: async () => ({ data: { name: "여행자" } }) };
+    }, moduleUrl);
+    const user = await request("members/me");
+    assert.equal(user.name, "여행자");
+    assert.equal(received.url, `http://${new URL(moduleUrl).hostname}:8080/enjoytrip/api/members/me`);
+    assert.equal(received.options.credentials, "include");
+  });
+}
 
 test("204 success does not attempt JSON parsing", async () => {
   const { request } = client(async () => ({ status: 204, json: () => { throw Error("must not parse"); } }));

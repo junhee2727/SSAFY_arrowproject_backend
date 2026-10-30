@@ -1,11 +1,12 @@
-// Optional end-to-end check: requires Playwright and Google Chrome on macOS.
+// Optional end-to-end check: requires Playwright, Chrome, Live Server and Tomcat.
 const { chromium } = require("playwright");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 
 (async () => {
-  const base = process.env.ENJOYTRIP_BASE_URL || "http://127.0.0.1:5500/enjoytrip";
+  const base = process.env.ENJOYTRIP_BASE_URL || "http://127.0.0.1:5500";
+  const apiBase = process.env.ENJOYTRIP_API_BASE_URL || "http://127.0.0.1:8080/enjoytrip";
   const screenshots = path.resolve(__dirname, "../../Backend/.runtime/screenshots");
   fs.mkdirSync(screenshots, { recursive: true });
   const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
@@ -18,7 +19,7 @@ const path = require("node:path");
   let guest;
   let deleted = false;
   async function api(method, route, data) {
-    return context.request.fetch(`${base}/api/${route}`, { method, data, headers: { "X-Requested-With": "EnjoyTrip", Origin: new URL(base).origin } });
+    return context.request.fetch(`${apiBase}/api/${route}`, { method, data, headers: { "X-Requested-With": "EnjoyTrip", Origin: new URL(base).origin } });
   }
   async function login() {
     await page.locator("[data-auth-guest] [data-modal-target=login-modal]").click();

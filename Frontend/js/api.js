@@ -1,4 +1,9 @@
-const API_BASE = new URL("../api/", import.meta.url);
+const moduleUrl = new URL(import.meta.url);
+const isLiveServer = moduleUrl.protocol === "http:" && moduleUrl.port === "5500"
+  && ["127.0.0.1", "localhost"].includes(moduleUrl.hostname);
+const API_BASE = isLiveServer
+  ? new URL(`http://${moduleUrl.hostname}:8080/enjoytrip/api/`)
+  : new URL("../api/", moduleUrl);
 
 export class ApiError extends Error {
   constructor(message, code, status) {
@@ -17,7 +22,7 @@ export async function apiRequest(path, { method = "GET", body } = {}) {
   try {
     response = await fetch(new URL(path, API_BASE), {
       method,
-      credentials: "same-origin",
+      credentials: "include",
       headers,
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
@@ -29,7 +34,7 @@ export async function apiRequest(path, { method = "GET", body } = {}) {
   try {
     payload = await response.json();
   } catch {
-    throw new ApiError("서버 응답을 확인하지 못했습니다. Tomcat 주소로 접속해주세요.", "INVALID_RESPONSE", response.status);
+    throw new ApiError("서버 응답을 확인하지 못했습니다. Tomcat 실행 상태와 API 주소를 확인해주세요.", "INVALID_RESPONSE", response.status);
   }
   if (!response.ok) {
     if (payload.error?.code === "LOGIN_REQUIRED") {

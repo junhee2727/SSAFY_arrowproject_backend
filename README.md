@@ -32,7 +32,7 @@ Backend/
   src/test/java/      # JUnit Jupiter 5.11.4 서비스 회귀 테스트
   scripts/            # 로컬 Tomcat 실행, 실제 HTTP 검증
 Frontend/
-  js/api.js           # context path를 보존하는 same-origin API 클라이언트
+  js/api.js           # Live Server → Tomcat API, 세션 쿠키 포함
   js/auth/            # 서버 세션 기반 회원 화면
   js/board/           # 서버 게시판 화면
 ```
@@ -41,16 +41,16 @@ Frontend/
 
 ## 포트와 실행 구성
 
-일반적으로 Tomcat 백엔드는 **8080**, VS Code Live Server는 **5500**을 사용합니다. 이 프로젝트의 현재 실행 안내는 **Tomcat 하나가 127.0.0.1:5500에서 프론트엔드와 API를 함께 제공하는 구성**입니다. Live Server를 함께 실행할 필요는 없습니다.
+프론트엔드는 **VS Code Live Server 5500**, 백엔드는 **Tomcat 8080**으로 각각 실행합니다.
 
-이 구성은 카카오 JavaScript 키의 등록 origin인 `http://127.0.0.1:5500`과 현재 API 클라이언트의 same-origin 요청을 맞추기 위한 것입니다. Maven으로 만든 WAR에 프론트엔드 파일도 포함됩니다.
+| 구분 | 주소 | 역할 |
+| --- | --- | --- |
+| 프론트엔드 | `http://127.0.0.1:5500/pages/map.html` | HTML·CSS·JavaScript, 지도·회원·게시판 화면 |
+| 백엔드 | `http://127.0.0.1:8080/enjoytrip/api` | 회원·인증·게시판 JSON API와 서버 세션 |
 
-| 구성 | 프론트엔드 | 백엔드 | 현재 지원 상태 |
-| --- | --- | --- | --- |
-| 현재 통합 실행 | Tomcat 5500의 `/enjoytrip/pages/` | 같은 Tomcat 5500의 `/enjoytrip/api/` | 아래 안내대로 실행 |
-| 서버 분리 | Live Server 5500 | Tomcat 8080 | API 서버 주소, CORS 및 세션 쿠키 처리 조정 필요 |
+`.vscode/settings.json`에 Live Server의 루트 폴더 `Frontend`, 호스트 `127.0.0.1`, 포트 `5500`을 지정했습니다. 브라우저 페이지는 5500에서 열고, `Frontend/js/api.js`가 API 요청을 같은 호스트의 8080으로 보냅니다. 기본 Tomcat context path는 `/enjoytrip`입니다.
 
-Live Server 5500과 Tomcat 8080을 각각 켜는 것만으로 현재 회원·게시판 API가 연결되지는 않습니다. 아래 명령의 **5500은 Live Server 포트가 아니라 프로젝트 Tomcat의 HTTP 포트**입니다.
+백엔드는 `http://127.0.0.1:5500`과 `http://localhost:5500`을 CORS로 허용하며 OPTIONS 사전 요청을 처리합니다. 프론트는 `credentials: "include"`로 세션 쿠키를 전송합니다. 호스트를 혼용하지 않도록 `127.0.0.1`을 권장합니다. 카카오에 등록된 origin도 `http://127.0.0.1:5500`입니다.
 
 ## Windows 준비
 
@@ -89,7 +89,7 @@ notepad .\Frontend\config.env
 
 관광·지도용 브라우저 API 키를 입력하고 저장합니다. 회원·게시판은 이 키가 없어도 동작합니다. 카카오 JavaScript 키에 등록된 사이트 주소는 **`http://127.0.0.1:5500`**이므로 브라우저에서도 같은 호스트·포트를 사용합니다. `localhost:5500`은 다른 origin입니다.
 
-`config.env`는 브라우저에서 읽을 수 있는 공개 API 키 전용 파일이며 Git에 커밋하지 않습니다. 로컬 WAR에도 포함되므로 서버 비밀 키를 넣지 않습니다. 키를 수정하면 WAR를 다시 빌드·배포합니다.
+`config.env`는 브라우저에서 읽을 수 있는 공개 API 키 전용 파일이며 Git에 커밋하지 않습니다. 로컬 WAR에도 포함되므로 서버 비밀 키를 넣지 않습니다. Live Server로 실행할 때 키를 수정하면 브라우저를 새로고침합니다. WAR에 포함된 복사본도 갱신하려면 다시 빌드·배포합니다.
 
 ```powershell
 Push-Location .\Backend
@@ -118,15 +118,15 @@ if (-not (Test-Path "$env:CATALINA_BASE\conf\server.xml")) {
 }
 ```
 
-처음 실행하기 전에 다음 명령으로 HTTP 포트를 **5500**, 종료 포트를 **5501**, 바인딩 주소를 **127.0.0.1**로 설정합니다. 이미 실행 중인 Tomcat이 있다면 먼저 종료한 뒤 설정합니다.
+처음 실행하기 전에 다음 명령으로 HTTP 포트를 **8080**, 종료 포트를 **8081**, 바인딩 주소를 **127.0.0.1**로 설정합니다. 이미 실행 중인 Tomcat이 있다면 먼저 종료한 뒤 설정합니다.
 
 ```powershell
 $serverXmlPath = Join-Path $env:CATALINA_BASE "conf\server.xml"
 [xml]$serverXml = Get-Content -LiteralPath $serverXmlPath -Raw
-$serverXml.Server.SetAttribute("port", "5501")
+$serverXml.Server.SetAttribute("port", "8081")
 $serverXml.Server.SetAttribute("address", "127.0.0.1")
 $httpConnector = $serverXml.Server.Service.Connector | Where-Object { $_.protocol -eq "HTTP/1.1" }
-$httpConnector.SetAttribute("port", "5500")
+$httpConnector.SetAttribute("port", "8080")
 $httpConnector.SetAttribute("address", "127.0.0.1")
 $httpConnector.SetAttribute("URIEncoding", "UTF-8")
 $serverXml.Save($serverXmlPath)
@@ -142,7 +142,7 @@ Copy-Item ".\Backend\target\enjoytrip.war" "$env:CATALINA_BASE\webapps\enjoytrip
 - CATALINA_BASE: `<저장소>\Backend\.runtime\tomcat`
 - 배포 파일: `<CATALINA_BASE>\webapps\enjoytrip.war`
 - context path: `/enjoytrip`
-- 접속: [관광 지도](http://127.0.0.1:5500/enjoytrip/pages/map.html), [자유게시판](http://127.0.0.1:5500/enjoytrip/pages/free-board.html), [마이페이지](http://127.0.0.1:5500/enjoytrip/pages/my-page.html)
+- 백엔드 확인: [게시판 목록 API](http://127.0.0.1:8080/enjoytrip/api/posts) — JSON 응답 확인
 - 로그: `<CATALINA_BASE>\logs`
 
 별도 창으로 서버를 실행하려면 `run` 대신 `start`를 사용합니다. 그 경우 같은 환경 변수가 설정된 PowerShell에서 아래 명령으로 종료합니다.
@@ -151,7 +151,18 @@ Copy-Item ".\Backend\target\enjoytrip.war" "$env:CATALINA_BASE\webapps\enjoytrip
 & "$env:CATALINA_HOME\bin\catalina.bat" stop
 ```
 
-소스 수정 후에는 **서버 종료 → WAR 재빌드 → WAR 복사 → 서버 실행** 순서로 다시 배포합니다. Python 정적 서버나 STS 서버가 5500을 점유하고 있으면 먼저 종료합니다. Python 정적 서버는 Servlet/JSP를 실행하지 못하므로 회원·게시판 연동은 위 Tomcat 주소에서 확인합니다. 저장소의 `Backend/scripts/tomcat.sh`는 macOS용이며 Windows에서는 위 `.bat` 명령을 사용합니다.
+백엔드 소스 수정 후에는 **Tomcat 종료 → WAR 재빌드 → WAR 복사 → Tomcat 실행** 순서로 다시 배포합니다. STS 등 다른 서버가 8080을 점유하고 있으면 먼저 종료합니다. 저장소의 `Backend/scripts/tomcat.sh`는 macOS용이며 기본 HTTP 포트도 8080입니다. Windows에서는 위 `.bat` 명령을 사용합니다.
+
+## Windows Live Server 실행
+
+1. VS Code에서 **저장소 루트 `SSAFY_arrowproject_backend`**를 폴더로 엽니다.
+2. 권장 확장인 **Live Server (`ritwickdey.LiveServer`)**를 설치합니다.
+3. `Frontend/pages/map.html`을 열고 우클릭하여 **Open with Live Server**를 선택합니다.
+4. 브라우저 주소가 **`http://127.0.0.1:5500/pages/map.html`**인지 확인합니다. 저장소 설정에 의해 `Frontend`가 웹 루트가 됩니다.
+
+접속: [관광 지도](http://127.0.0.1:5500/pages/map.html), [자유게시판](http://127.0.0.1:5500/pages/free-board.html), [마이페이지](http://127.0.0.1:5500/pages/my-page.html)
+
+Tomcat 8080과 Live Server 5500을 동시에 실행합니다. 프론트 파일 수정은 Live Server에 바로 반영되며, 키 설정도 프론트의 `Frontend/config.env`에서 읽습니다. 회원·게시판 요청과 로그인 쿠키는 8080의 Tomcat이 처리합니다. Live Server 종료는 VS Code 상태 표시줄의 `Port: 5500`을 누릅니다. Python 정적 서버 등 다른 프로세스를 5500에서 동시에 실행하지 않습니다.
 
 ## API 요약
 
@@ -173,11 +184,11 @@ Copy-Item ".\Backend\target\enjoytrip.war" "$env:CATALINA_BASE\webapps\enjoytrip
 
 Notion의 회원가입 표와 상세 경로가 달랐던 부분은 표 기준 `/members/register`로 구현했습니다. 별도 가입 별칭 API는 추가하지 않습니다.
 
-직접 HTTP 클라이언트를 사용할 때 변경 요청에는 `X-Requested-With: EnjoyTrip`을 지정합니다. 본문이 있으면 `Content-Type: application/json`도 필요합니다. Origin이 있으면 같은 origin이어야 하며, 브라우저의 cross-site 요청은 거절합니다. 앱은 같은 origin의 JSESSIONID 쿠키를 전송합니다. 알 수 없는 JSON 필드는 400이고, 클라이언트가 작성자나 권한을 지정할 수 없습니다.
+직접 HTTP 클라이언트를 사용할 때 변경 요청에는 `X-Requested-With: EnjoyTrip`을 지정합니다. 본문이 있으면 `Content-Type: application/json`도 필요합니다. Origin은 위 Live Server 허용 주소 또는 백엔드 자신과 같은 origin이어야 합니다. 그 외 origin과 변경 요청의 cross-site 접근은 거절합니다. 허용 주소를 응답에 명시하고 `Access-Control-Allow-Credentials: true`를 사용하며 `*`는 사용하지 않습니다. 브라우저는 `credentials: "include"`로 HttpOnly JSESSIONID 쿠키를 전송합니다. 같은 호스트에서 포트만 다르게 사용하므로 SameSite=Lax를 유지합니다. [CORS와 자격 증명 참고](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS). 알 수 없는 JSON 필드는 400이고, 클라이언트가 작성자나 권한을 지정할 수 없습니다.
 
 ## Windows에서 검증
 
-JDK·Maven 환경 변수를 설정한 PowerShell에서 저장소 루트를 기준으로 실행합니다. API·브라우저 검사는 Tomcat이 실행 중이어야 합니다.
+JDK·Maven 환경 변수를 설정한 PowerShell에서 저장소 루트를 기준으로 실행합니다. API 검사는 Tomcat 8080, 브라우저 검사는 Tomcat 8080과 Live Server 5500이 모두 실행 중이어야 합니다.
 
 ```powershell
 Push-Location .\Backend
@@ -193,7 +204,7 @@ node --test $testFiles
 py -3 .\Backend\scripts\check_api.py
 ```
 
-`py`가 없다면 Python 3의 `python` 명령으로 바꿔 실행합니다. `check_api.py`는 11개 API의 한글 왕복, 세션 ID 갱신/쿠키, 중복 가입, 검증 오류, 작성자 권한, 정렬/검색/페이징, 이름 반영, 탈퇴 연계와 다른 세션 무효화를 검증합니다. 고유한 테스트 회원을 만들고 종료 시 정리합니다. 기본 검사 주소는 `http://127.0.0.1:5500/enjoytrip`입니다.
+`py`가 없다면 Python 3의 `python` 명령으로 바꿔 실행합니다. `check_api.py`는 11개 API의 한글 왕복, 세션 ID 갱신/쿠키, 중복 가입, 검증 오류, 작성자 권한, 정렬/검색/페이징, 이름 반영, 탈퇴 연계와 다른 세션 무효화를 검증합니다. 고유한 테스트 회원을 만들고 종료 시 정리합니다. 기본 API 검사 주소는 `http://127.0.0.1:8080/enjoytrip`이며 Live Server origin을 보내 CORS 응답·사전 요청·세션도 함께 검증합니다.
 
 Chrome과 Node.js/npm이 설치되어 있으면 선택적으로 브라우저 검사도 실행할 수 있습니다. Playwright는 임시 폴더에 설치하고 Windows Chrome 경로를 명시합니다.
 
@@ -202,7 +213,8 @@ $browserTools = Join-Path $env:TEMP "enjoytrip-browser-tools"
 npm install --prefix "$browserTools" playwright
 $env:NODE_PATH = Join-Path $browserTools "node_modules"
 $env:CHROME_PATH = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-$env:ENJOYTRIP_BASE_URL = "http://127.0.0.1:5500/enjoytrip"
+$env:ENJOYTRIP_BASE_URL = "http://127.0.0.1:5500"
+$env:ENJOYTRIP_API_BASE_URL = "http://127.0.0.1:8080/enjoytrip"
 node .\Frontend\tests\browser-smoke.cjs
 ```
 
@@ -216,15 +228,15 @@ Chrome 설치 위치가 다르면 `CHROME_PATH`를 실제 `chrome.exe` 경로로
 2. `Window → Preferences → Java → Installed JREs`에 Windows의 JDK 25 설치 폴더를 추가하고, 프로젝트 JRE도 JDK 25로 지정합니다.
 3. 프로젝트에서 `Maven → Update Project`를 실행합니다.
 4. `Server → Runtime Environments`에 설치한 Apache Tomcat 11을 추가하고 JRE를 JDK 25로 지정합니다.
-5. STS에서 직접 배포한다면 Servers 뷰에서 HTTP 포트 **5500**, context path **`/enjoytrip`**을 확인하고 `http://127.0.0.1:5500/enjoytrip/pages/map.html`로 접속합니다. 위 PowerShell Tomcat과 동시에 같은 포트로 실행하지 않습니다.
+5. STS에서 직접 배포한다면 Servers 뷰에서 HTTP 포트 **8080**, context path **`/enjoytrip`**을 확인합니다. 프론트는 Live Server의 `http://127.0.0.1:5500/pages/map.html`에서 엽니다. 위 PowerShell Tomcat과 STS Tomcat을 동시에 8080으로 실행하지 않습니다.
 
 현재 Eclipse 메타데이터는 **Java 25 / Dynamic Web Module 6.0**이고, `pom.xml`과 `web.xml`은 **Servlet 6.1**을 대상으로 합니다. STS/WTP가 Web Facet 6.1을 지원하면 Project Facets도 6.1로 맞춥니다. 지원하지 않으면 관련 도구를 업데이트하거나, 위 Maven WAR + Tomcat 11 배포 절차로 실행합니다. Servlet 의존성을 6.0 또는 `javax.servlet`로 바꾸지 않습니다.
 
-Maven compiler 3.15.0(release 25), WAR 3.5.1, Servlet 6.1.0 provided, JSTL API 3.0.2 + 구현 3.0.1을 사용합니다. STS 서버는 자체 `CATALINA_BASE`를 사용하므로 위 PowerShell 설정과 별개입니다. Maven이 `Frontend`를 WAR에 포함하므로, STS 직접 배포에서 프론트 리소스가 누락되면 빌드한 WAR를 위 절차로 배포합니다.
+Maven compiler 3.15.0(release 25), WAR 3.5.1, Servlet 6.1.0 provided, JSTL API 3.0.2 + 구현 3.0.1을 사용합니다. STS 서버는 자체 `CATALINA_BASE`를 사용하므로 위 PowerShell 설정과 별개입니다. 프론트 정적 파일은 Live Server에서 직접 제공하므로 STS에 복사할 필요가 없습니다. Maven WAR에는 호환용 프론트 복사본도 포함되지만 기본 접속은 위 Live Server 주소를 사용합니다.
 
 ## 기존 검증 결과
 
-아래 결과는 macOS의 JDK 25 / Tomcat 11.0.27 / Chrome에서 확인한 기록입니다. Windows 실행 명령은 공식 문서와 프로젝트 설정을 기준으로 작성했으며 Windows 실환경 실행은 아직 검증하지 않았습니다.
+아래 결과는 macOS의 JDK 25 / Tomcat 11.0.27 / Chrome에서 확인한 기록입니다. 지도 검증은 서버 분리 전 같은 origin에서 수행한 기록이며, 분리 구성의 검증 결과는 아래에 별도로 기록합니다. Windows 실행 명령은 공식 문서와 프로젝트 설정을 기준으로 작성했으며 Windows 실환경 실행은 아직 검증하지 않았습니다.
 
 - JDK 25의 Maven 테스트 8개와 clean package 통과
 - 프론트엔드 node:test 75개 통과
@@ -235,3 +247,16 @@ Maven compiler 3.15.0(release 25), WAR 3.5.1, Servlet 6.1.0 provided, JSTL API 3
 - 서울특별시 → 종로구 → 역사관광 검색에서 66곳 조회, 목록·지도 마커 표시, 경복궁 상세 소개·사진·방문 정보·기상청 날씨 표시를 확인했습니다.
 - 별도의 `Computer Use 검증용 여행`(2026-11-01)을 생성하고 경복궁·경희궁 2곳 추가, 직선거리 기준 최단 순서 적용, 카카오내비 자동차 경로 지도 표시, 새로고침 후 2개 장소 저장 유지를 확인했습니다. 기존 여행 계획은 보존했습니다.
 - 현재 위치 권한을 사용하는 내 주변 검색은 이번 검증에 포함하지 않았습니다.
+
+## 서버 분리 후 검증 결과
+
+2026-10-30, macOS에서 VS Code Live Server 5.7.10에 포함된 서버 엔진을 저장소 설정(Frontend 루트, 127.0.0.1:5500)으로 실행하고 Tomcat 11.0.27을 8080에서 실행했습니다. VS Code 화면 제어 연결이 중단되어 확장의 실행 버튼 조작은 검증하지 않았습니다.
+
+- JDK 25의 `mvn test`, `mvn clean package` 통과 (JUnit 8개)
+- 프론트엔드 `node:test` 78개 통과 (Live Server의 루트 경로·호스트별 API 주소와 쿠키 전송 회귀 검사 포함)
+- HTTP 검사 71건 통과 (허용 origin의 CORS 헤더, OPTIONS 사전 요청, 미허용 origin·메서드·헤더 거절 포함)
+- Chrome에서 5500 화면 → 8080 API로 회원가입·로그인·새로고침 세션 유지·글 작성/수정/삭제·검색/페이징·회원정보 수정·로그아웃·탈퇴 통과
+- 1440/820/390px 회원·게시판 화면과 모달 키보드 검사 통과
+- Live Server 주소의 지도 SDK 로드와 서울 종로구 역사관광 검색(66곳, 경복궁 포함) 통과
+
+Windows 실환경 실행과 현재 위치 권한을 사용하는 내 주변 검색은 미검증입니다.

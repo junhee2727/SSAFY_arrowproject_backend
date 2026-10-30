@@ -8,8 +8,8 @@ import urllib.parse
 import urllib.request
 import uuid
 
-BASE = (sys.argv[1] if len(sys.argv) > 1 else 'http://127.0.0.1:5500/enjoytrip').rstrip('/')
-ORIGIN = '{0.scheme}://{0.netloc}'.format(urllib.parse.urlsplit(BASE))
+BASE = (sys.argv[1] if len(sys.argv) > 1 else 'http://127.0.0.1:8080/enjoytrip').rstrip('/')
+ORIGIN = 'http://127.0.0.1:5500'
 checks = 0
 
 class Client:
@@ -36,6 +36,12 @@ class Client:
             response = error
         payload = response.read()
         assert response.status == expected, (method, path, response.status, expected, payload.decode())
+        if request_headers.get('Origin') == ORIGIN:
+            assert response.headers.get('Access-Control-Allow-Origin') == ORIGIN
+            assert response.headers.get('Access-Control-Allow-Credentials') == 'true'
+            assert 'Origin' in response.headers.get('Vary', '')
+        elif request_headers.get('Origin') == 'http://elsewhere.invalid':
+            assert response.headers.get('Access-Control-Allow-Origin') is None
         checks += 1
         if expected == 204:
             assert payload == b''
@@ -67,6 +73,17 @@ def main():
     email = uuid.uuid4().hex + '@example.com'
     other_email = uuid.uuid4().hex + '@example.com'
     try:
+        for method in ['GET', 'POST', 'PUT', 'DELETE']:
+            guest.call('OPTIONS', '/members/me', expected=204, headers={
+                'Access-Control-Request-Method': method,
+                'Access-Control-Request-Headers': 'content-type, X-Requested-With',
+                'X-Requested-With': None,
+            })
+        guest.call('OPTIONS', '/members/me', expected=403, headers={'Access-Control-Request-Method': 'POST', 'Origin': 'http://elsewhere.invalid'})
+        guest.call('OPTIONS', '/members/me', expected=403, headers={'Access-Control-Request-Method': 'TRACE'})
+        guest.call('OPTIONS', '/members/me', expected=403, headers={'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'X-Unapproved'})
+        guest.call('OPTIONS', '/members/me', expected=403)
+        guest.call('GET', '/posts', expected=403, headers={'Origin': 'http://elsewhere.invalid'})
         guest.call('GET', '/members/me', expected=401)
         for changes in [dict(name='가'), dict(email='invalid'), dict(password='short', passwordConfirm='short'), dict(passwordConfirm='different'), dict(terms=False), dict(terms=None), dict(role='ADMIN'), dict(terms='true')]:
             guest.call('POST', '/members/register', registration(email, **changes), expected=400)
