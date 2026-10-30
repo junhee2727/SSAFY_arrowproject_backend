@@ -41,8 +41,6 @@
         </header>
 
         <div class="post-detail-body" id="free-board-detail-body"></div>
-        <div class="post-image-gallery" id="free-board-images" hidden></div>
-        <nav class="post-detail-navigation" id="free-board-navigation" aria-label="이전 및 다음 게시글"></nav>
       </article>
 
       <div class="post-detail-actions" id="free-board-detail-actions">
@@ -53,16 +51,8 @@
         </div>
       </div>
 
-      <section class="comment-panel" id="free-board-comments" aria-labelledby="comment-title">
-        <header class="comment-header"><h2 id="comment-title">댓글 <strong id="comment-count">0</strong></h2></header>
-        <ul class="comment-list" id="comment-list"></ul>
-        <form class="comment-form" id="comment-form">
-          <label class="visually-hidden" for="comment-content">댓글 내용</label>
-          <textarea class="form-control" id="comment-content" name="comment" rows="2" maxlength="500" placeholder="여행 이야기에 따뜻한 댓글을 남겨보세요."></textarea>
-          <button class="board-search-button comment-submit-button" type="submit">댓글 등록</button>
-        </form>
-        <p class="board-form-message comment-message" id="comment-message" role="alert" aria-live="polite"></p>
-      </section>
+      <p class="board-form-message" id="board-detail-message" role="status" aria-live="polite"></p>
+      <button class="btn btn-outline-primary" id="board-detail-retry" type="button" hidden>다시 시도</button>
     </main>
 
     <div data-include="./footer.html"></div>

@@ -56,12 +56,6 @@
             <p class="board-form-help"><span>개인정보가 포함되지 않도록 확인해주세요.</span><span id="post-content-count">0/2,000</span></p>
           </div>
 
-          <div class="board-form-field">
-            <label class="form-label" for="post-images">사진 첨부 <span class="text-secondary fw-normal">(선택)</span></label>
-            <input class="form-control board-file-input" id="post-images" name="images" type="file" accept="image/png,image/jpeg,image/webp" multiple />
-            <p class="board-form-help"><span>PNG, JPG, WEBP 파일을 최대 3장까지 첨부할 수 있습니다. 한 장당 최대 700KB입니다.</span></p>
-          </div>
-
           <aside class="board-guidelines" aria-label="게시글 작성 안내">
             <strong>작성 전에 확인해주세요</strong>
             타인의 개인정보, 광고성 내용, 불쾌감을 주는 표현은 작성하지 마세요. 여행과 관련 없는 게시글은 안내 없이 삭제될 수 있습니다.
@@ -69,6 +63,7 @@
 
           <p class="board-form-message" id="board-form-message" role="alert" aria-live="polite"></p>
 
+          <button class="btn btn-outline-primary" id="board-write-retry" type="button" hidden>다시 불러오기</button>
           <div class="board-write-actions">
             <a class="board-cancel-button" href="./free-board.html">취소</a>
             <button class="board-search-button board-submit-button" type="submit">게시글 등록</button>

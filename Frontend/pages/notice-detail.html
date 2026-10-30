@@ -19,33 +19,11 @@
     <div data-include="./header.html"></div>
 
     <main class="board-main">
-      <section class="board-hero" aria-labelledby="notice-page-title">
-        <div>
-          <p class="board-eyebrow">푸른 하늘 여행 소식</p>
-          <h1 class="board-title" id="notice-page-title"><a class="board-title-home-link" href="./notice.html">공지사항</a></h1>
-          <p class="board-description">서비스 이용 안내와 새로운 소식을 확인하세요.</p>
-        </div>
+      <section class="board-panel p-4" aria-labelledby="notice-ready-title">
+        <h1 class="h3" id="notice-ready-title">공지사항은 준비 중입니다</h1>
+        <p>여행 이야기는 자유 게시판에서 나눠주세요.</p>
+        <a class="btn btn-primary" href="./free-board.html">자유 게시판으로</a>
       </section>
-
-      <section class="board-panel board-not-found" id="notice-not-found" hidden>
-        <h2>공지사항을 찾을 수 없습니다.</h2>
-        <p>삭제되었거나 잘못된 주소로 접근했습니다.</p>
-        <a class="board-cancel-button" href="./notice.html">목록으로</a>
-      </section>
-
-      <article class="post-detail-panel" id="notice-detail">
-        <header class="post-detail-header">
-          <div class="post-detail-labels"><span class="notice-badge" id="notice-detail-badge"></span></div>
-          <h2 class="post-detail-title" id="notice-detail-title"></h2>
-          <p class="post-meta" id="notice-detail-meta"></p>
-        </header>
-        <div class="post-detail-body" id="notice-detail-body"></div>
-        <nav class="post-detail-navigation" id="notice-navigation" aria-label="이전 및 다음 공지사항"></nav>
-      </article>
-
-      <div class="post-detail-actions" id="notice-detail-actions">
-        <a class="board-cancel-button" href="./notice.html">목록으로</a>
-      </div>
     </main>
 
     <div data-include="./footer.html"></div>
@@ -54,13 +32,11 @@
       import { initAuthModals } from "../js/auth/auth-modal.js";
       import { initAuthState } from "../js/auth/auth-state.js";
       import { initAuthForms } from "../js/auth/auth-form.js";
-      import { initNoticeDetail } from "../js/board/notice-detail.js";
 
       await loadIncludes();
       initAuthModals();
       await initAuthState();
       initAuthForms();
-      initNoticeDetail();
     </script>
   </body>
 </html>

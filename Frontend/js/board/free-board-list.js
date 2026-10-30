@@ -1,131 +1,86 @@
 import { getCurrentUser } from "../auth/auth-storage.js";
-import { getFreePosts } from "./board-storage.js";
-import {
-  CATEGORY_LABELS,
-  formatDate,
-  getPageNumber,
-  openLoginModal,
-  paginate,
-  renderPagination,
-  setUrlPage,
-} from "./board-ui.js";
-
-const PAGE_SIZE = 7;
-
-function matchesSearch(post, type, keyword) {
-  if (!keyword) return true;
-
-  const normalizedKeyword = keyword.toLocaleLowerCase("ko-KR");
-  const fields = {
-    title: post.title,
-    author: post.authorName,
-    all: `${post.title} ${post.content}`,
-  };
-
-  return String(fields[type] ?? fields.all)
-    .toLocaleLowerCase("ko-KR")
-    .includes(normalizedKeyword);
-}
-
-function createPostRow(post) {
-  const row = document.createElement("tr");
-  const numberCell = document.createElement("td");
-  const categoryCell = document.createElement("td");
-  const titleCell = document.createElement("td");
-  const authorCell = document.createElement("td");
-  const dateCell = document.createElement("td");
-  const viewsCell = document.createElement("td");
-  const category = document.createElement("span");
-  const titleLink = document.createElement("a");
-
-  numberCell.textContent = post.sequence;
-  category.className = "board-category";
-  category.textContent = CATEGORY_LABELS[post.category] ?? "자유";
-  categoryCell.append(category);
-
-  titleCell.className = "board-title-cell";
-  titleLink.className = "board-title-link";
-  titleLink.href = `./free-board-detail.html?id=${encodeURIComponent(post.id)}`;
-  titleLink.textContent = post.title;
-  titleCell.append(titleLink);
-
-  const commentCount = post.comments?.length ?? 0;
-  if (commentCount > 0) {
-    const commentBadge = document.createElement("span");
-    commentBadge.className = "comment-count";
-    commentBadge.textContent = `[${commentCount}]`;
-    titleCell.append(commentBadge);
-  }
-
-  authorCell.textContent = post.authorName;
-  dateCell.textContent = formatDate(post.createdAt);
-  viewsCell.textContent = post.views ?? 0;
-  row.append(numberCell, categoryCell, titleCell, authorCell, dateCell, viewsCell);
-  return row;
-}
+import { searchPosts } from "./board-api.js";
+import { CATEGORY_LABELS, formatDate, getPageNumber, openLoginModal, renderPagination } from "./board-ui.js";
 
 export function initFreeBoardList() {
-  const tableBody = document.querySelector("#free-board-body");
-  const countElement = document.querySelector("#free-board-count");
-  const paginationElement = document.querySelector("#free-board-pagination");
-  const searchForm = document.querySelector("#free-board-search-form");
-  const searchType = document.querySelector("#free-board-search-type");
-  const searchKeyword = document.querySelector("#free-board-search-keyword");
-  const writeButton = document.querySelector("#free-board-write-button");
+  const body = document.querySelector("#free-board-body");
+  const count = document.querySelector("#free-board-count");
+  const pagination = document.querySelector("#free-board-pagination");
+  const form = document.querySelector("#free-board-search-form");
+  const type = document.querySelector("#free-board-search-type");
+  const keyword = document.querySelector("#free-board-search-keyword");
+  if (!body || !form) return;
+  const params = new URLSearchParams(window.location.search);
+  type.value = ["all", "title", "author"].includes(params.get("type")) ? params.get("type") : "all";
+  keyword.value = params.get("keyword") ?? "";
+  let generation = 0;
 
-  if (!tableBody || !countElement || !paginationElement || !searchForm) return;
-
-  const initialParams = new URLSearchParams(window.location.search);
-  searchType.value = initialParams.get("type") ?? "all";
-  searchKeyword.value = initialParams.get("keyword") ?? "";
-
-  function render(requestedPage = getPageNumber(new URLSearchParams(window.location.search))) {
-    const type = searchType.value;
-    const keyword = searchKeyword.value.trim();
-    const filteredPosts = getFreePosts().filter((post) => matchesSearch(post, type, keyword));
-    const pageData = paginate(filteredPosts, requestedPage, PAGE_SIZE);
-
-    tableBody.replaceChildren();
-    countElement.textContent = String(filteredPosts.length);
-
-    if (pageData.items.length === 0) {
-      const row = document.createElement("tr");
-      const cell = document.createElement("td");
-      cell.className = "board-empty";
-      cell.colSpan = 6;
-      cell.textContent = keyword ? "검색 결과가 없습니다." : "아직 작성된 게시글이 없습니다.";
-      row.append(cell);
-      tableBody.append(row);
-    } else {
-      pageData.items.forEach((post) => tableBody.append(createPostRow(post)));
+  function message(text, retry = false) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 5;
+    cell.className = "board-empty";
+    cell.textContent = text;
+    if (retry) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "btn btn-outline-primary btn-sm ms-2";
+      button.textContent = "다시 시도";
+      button.addEventListener("click", () => render());
+      cell.append(button);
     }
-
-    renderPagination(paginationElement, pageData.page, pageData.totalPages, (page) => {
-      setUrlPage(page);
-      render(page);
-      document.querySelector("#free-board")?.focus();
-    });
+    row.append(cell);
+    body.replaceChildren(row);
   }
-
-  searchForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const url = new URL(window.location.href);
-    const keyword = searchKeyword.value.trim();
-
-    url.searchParams.set("type", searchType.value);
-    if (keyword) url.searchParams.set("keyword", keyword);
-    else url.searchParams.delete("keyword");
-    url.searchParams.set("page", "1");
-    window.history.replaceState({}, "", url);
-    render(1);
-  });
-
-  writeButton?.addEventListener("click", (event) => {
+  function row(post) {
+    const item = document.createElement("tr");
+    [post.sequence, CATEGORY_LABELS[post.category] ?? "자유", post.title, post.authorName, formatDate(post.createdAt)].forEach((text, index) => {
+      const cell = document.createElement("td");
+      if (index === 2) {
+        cell.className = "board-title-cell";
+        const link = document.createElement("a");
+        link.className = "board-title-link";
+        link.href = `./free-board-detail.html?id=${encodeURIComponent(post.id)}`;
+        link.textContent = text;
+        cell.append(link);
+      } else cell.textContent = text;
+      item.append(cell);
+    });
+    return item;
+  }
+  async function render(page = getPageNumber(new URLSearchParams(window.location.search))) {
+    const request = ++generation;
+    const query = { page, type: type.value, keyword: keyword.value.trim() };
+    message("게시글을 불러오는 중입니다.");
+    pagination.replaceChildren();
+    count.textContent = "—";
+    try {
+      const result = await searchPosts(query);
+      if (request !== generation) return;
+      count.textContent = String(result.totalItems);
+      if (!result.items.length) message(query.keyword ? "검색 결과가 없습니다." : "아직 작성된 게시글이 없습니다.");
+      else body.replaceChildren(...result.items.map(row));
+      const url = new URL(window.location.href);
+      url.searchParams.set("page", String(result.page));
+      url.searchParams.set("type", query.type);
+      if (query.keyword) url.searchParams.set("keyword", query.keyword);
+      else url.searchParams.delete("keyword");
+      window.history.replaceState({}, "", url);
+      renderPagination(pagination, result.page, result.totalPages, (next) => {
+        render(next);
+        document.querySelector("#free-board").focus();
+      });
+    } catch (error) {
+      if (request !== generation) return;
+      message(error.message, true);
+    }
+  }
+  form.addEventListener("submit", (event) => { event.preventDefault(); render(1); });
+  document.querySelector("#free-board-write-button")?.addEventListener("click", (event) => {
     if (getCurrentUser()) return;
-
     event.preventDefault();
     openLoginModal();
   });
-
+  window.addEventListener("pageshow", (event) => { if (event.persisted) render(); });
   render();
 }

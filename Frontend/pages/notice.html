@@ -19,51 +19,10 @@
     <div data-include="./header.html"></div>
 
     <main class="board-main">
-      <section class="board-hero" aria-labelledby="notice-title">
-        <div>
-          <p class="board-eyebrow">푸른 하늘 여행 소식</p>
-          <h1 class="board-title" id="notice-title">공지사항</h1>
-          <p class="board-description">서비스 이용 안내와 새로운 소식을 빠르게 확인해보세요.</p>
-        </div>
-      </section>
-
-      <section class="board-panel" id="notice-board" aria-label="공지사항 목록" tabindex="-1">
-        <div class="board-toolbar">
-          <p class="board-count">전체 <strong id="notice-count">0</strong>건</p>
-          <form class="board-search" id="notice-search-form" role="search">
-            <label class="visually-hidden" for="notice-search-type">검색 범위</label>
-            <select class="form-select" id="notice-search-type" name="type">
-              <option value="all">제목+내용</option>
-              <option value="title">제목</option>
-              <option value="content">내용</option>
-            </select>
-            <label class="visually-hidden" for="notice-search-keyword">공지사항 검색어</label>
-            <input class="form-control" id="notice-search-keyword" name="keyword" type="search" placeholder="검색어를 입력하세요" />
-            <button class="board-search-button" type="submit">검색</button>
-          </form>
-        </div>
-
-        <div class="board-table-wrap">
-          <table class="board-table">
-            <caption class="visually-hidden">공지사항 번호, 제목, 작성일, 조회수 목록</caption>
-            <colgroup>
-              <col style="width: 90px" />
-              <col />
-              <col style="width: 140px" />
-              <col style="width: 100px" />
-            </colgroup>
-            <thead>
-              <tr><th scope="col">번호</th><th scope="col">제목</th><th scope="col">작성일</th><th scope="col">조회</th></tr>
-            </thead>
-            <tbody id="notice-board-body"></tbody>
-          </table>
-        </div>
-
-        <footer class="board-footer">
-          <nav aria-label="공지사항 페이지">
-            <ul class="board-pagination" id="notice-pagination"></ul>
-          </nav>
-        </footer>
+      <section class="board-panel p-4" aria-labelledby="notice-ready-title">
+        <h1 class="h3" id="notice-ready-title">공지사항은 준비 중입니다</h1>
+        <p>여행 이야기는 자유 게시판에서 나눠주세요.</p>
+        <a class="btn btn-primary" href="./free-board.html">자유 게시판으로</a>
       </section>
     </main>
 
@@ -73,13 +32,11 @@
       import { initAuthModals } from "../js/auth/auth-modal.js";
       import { initAuthState } from "../js/auth/auth-state.js";
       import { initAuthForms } from "../js/auth/auth-form.js";
-      import { initNoticeList } from "../js/board/notice-list.js";
 
       await loadIncludes();
       initAuthModals();
       await initAuthState();
       initAuthForms();
-      initNoticeList();
     </script>
   </body>
 </html>

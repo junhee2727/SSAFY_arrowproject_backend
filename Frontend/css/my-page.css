@@ -44,7 +44,7 @@
 
 .my-page-dashboard {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(300px, .8fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 20px;
 }
 
