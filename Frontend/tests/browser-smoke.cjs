@@ -5,7 +5,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 (async () => {
-  const base = process.env.ENJOYTRIP_BASE_URL || "http://127.0.0.1:8081/enjoytrip";
+  const base = process.env.ENJOYTRIP_BASE_URL || "http://127.0.0.1:5500/enjoytrip";
   const screenshots = path.resolve(__dirname, "../../Backend/.runtime/screenshots");
   fs.mkdirSync(screenshots, { recursive: true });
   const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });

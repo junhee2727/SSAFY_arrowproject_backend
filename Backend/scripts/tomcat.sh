@@ -6,7 +6,7 @@ export CATALINA_HOME="${CATALINA_HOME:-$(brew --prefix tomcat)/libexec}"
 export CATALINA_BASE="$PROJECT_DIR/.runtime/tomcat"
 export CATALINA_PID="$CATALINA_BASE/tomcat.pid"
 export CATALINA_OPTS="${CATALINA_OPTS:-} -Dfile.encoding=UTF-8"
-PORT="${ENJOYTRIP_PORT:-8081}"
+PORT="${ENJOYTRIP_PORT:-5500}"
 case "${1:-start}" in
   start|run)
     if [[ -f "$CATALINA_PID" ]] && kill -0 "$(cat "$CATALINA_PID")" 2>/dev/null; then

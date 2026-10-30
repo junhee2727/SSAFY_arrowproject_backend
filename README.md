@@ -84,13 +84,13 @@ Backend/scripts/tomcat.sh start
 - CATALINA_BASE: `/Users/junheelee/Work/SSAFY_arrowproject_backend/Backend/.runtime/tomcat`
 - 배포: `.runtime/tomcat/webapps/enjoytrip.war`
 - context path: `/enjoytrip`
-- HTTP: **127.0.0.1:8081**, 종료 포트: **127.0.0.1:8082**
+- HTTP 접속: **127.0.0.1:5500**, 종료 포트: **127.0.0.1:5501**
 - 기본 Java: `/usr/libexec/java_home -v 25`로 발견한 JDK
 - 로그: `Backend/.runtime/tomcat/logs/`
 
-접속: [관광 지도](http://127.0.0.1:8081/enjoytrip/pages/map.html), [자유게시판](http://127.0.0.1:8081/enjoytrip/pages/free-board.html), [마이페이지](http://127.0.0.1:8081/enjoytrip/pages/my-page.html)
+접속: [관광 지도](http://127.0.0.1:5500/enjoytrip/pages/map.html), [자유게시판](http://127.0.0.1:5500/enjoytrip/pages/free-board.html), [마이페이지](http://127.0.0.1:5500/enjoytrip/pages/my-page.html)
 
-이번 작업의 실제 실행 검증은 `run` 모드로 수행했습니다. 포그라운드 로그를 보려면 `start` 대신 `run`을 사용하고 Control+C로 종료합니다. `ENJOYTRIP_PORT`로 HTTP 포트를 바꿀 수 있으며 다음 번호를 종료 포트로 사용합니다. `CATALINA_HOME`, `ENJOYTRIP_JAVA_HOME`으로 설치 경로를 명시할 수도 있습니다. 기존 Homebrew 서비스/STS Tomcat과 별도의 CATALINA_BASE를 사용합니다.
+이번 작업의 실제 실행 검증은 `run` 모드로 수행했습니다. 포그라운드 로그를 보려면 `start` 대신 `run`을 사용하고 Control+C로 종료합니다. `ENJOYTRIP_PORT`로 HTTP 포트를 바꿀 수 있으며 다음 번호를 종료 포트로 사용합니다. `CATALINA_HOME`, `ENJOYTRIP_JAVA_HOME`으로 설치 경로를 명시할 수도 있습니다. 기존 Homebrew 서비스/STS Tomcat과 별도의 CATALINA_BASE를 사용합니다. 카카오에 등록된 사이트 주소는 `http://127.0.0.1:5500`이므로 브라우저도 이 호스트와 포트를 사용합니다. Python 정적 서버나 다른 Tomcat이 5500을 사용 중이면 먼저 해당 서버를 종료해 포트 충돌을 해결해야 합니다.
 
 ```sh
 Backend/scripts/tomcat.sh stop
@@ -139,7 +139,7 @@ Playwright와 Chrome이 있는 환경에서는 브라우저 검사도 실행할 
 node Frontend/tests/browser-smoke.cjs
 ```
 
-Playwright를 공용 위치에 설치했다면 NODE_PATH를 해당 node_modules로 지정합니다. CHROME_PATH와 ENJOYTRIP_BASE_URL을 바꿔 실행 환경을 조정할 수 있습니다. 기본 Chrome 경로는 macOS Google Chrome이며, 기본 검사 주소는 127.0.0.1:8081/enjoytrip입니다.
+Playwright를 공용 위치에 설치했다면 NODE_PATH를 해당 node_modules로 지정합니다. CHROME_PATH와 ENJOYTRIP_BASE_URL을 바꿔 실행 환경을 조정할 수 있습니다. 기본 Chrome 경로는 macOS Google Chrome이며, 기본 검사 주소는 127.0.0.1:5500/enjoytrip입니다.
 
 브라우저 검사는 회원가입·로그인·새로고침 세션·글 작성/수정/삭제·다른 브라우저 조회·검색/페이징·이름 변경·로그아웃·탈퇴, 작성 중 세션 만료 후 로그인 복구, 오류 후 재시도, 모달 Escape/포커스 복원을 확인합니다. 1440/820/390px 캡처는 `Backend/.runtime/screenshots/`에 저장됩니다. 지도 API 키를 비운 상황에서도 회원 모달은 열리는지 별도로 확인합니다. 실제 관광 API 결과는 키와 허용 origin 및 외부 서비스 상태에 따라 달라집니다.
 
@@ -156,4 +156,7 @@ STS에서 Maven Update Project를 실행한 뒤 Installed JREs는 JDK 25, Target
 - Tomcat 11.0.27 실제 HTTP 계약 검사 62건 통과
 - Chrome 회원/게시판 E2E와 1440/820/390px 레이아웃·키보드 모달 검사 통과
 - 최종 WAR의 프론트 소스 일치, JSTL 포함 및 Servlet/JSP API provided 확인
-- 실제 지도 화면에서는 카카오 SDK 로드 실패 안내를 확인했습니다. 회원·게시판 연동은 정상이며 지도 실조회는 현재 키/허용 origin/외부 API 연결 상태를 별도로 확인해야 합니다. 외부 관광 API를 정상 실조회했다고 판단하지 않았습니다.
+- 2026-10-30 Computer Use로 실제 Chrome에서 카카오 등록 origin인 `http://127.0.0.1:5500`으로 지도 실동작을 검증했습니다. 이전 8081/localhost:8080의 SDK 401 오류는 등록 origin 불일치로 재현됐고, 127.0.0.1:5500에서는 정상 로드됩니다. 키 변경은 하지 않았습니다.
+- 서울특별시 → 종로구 → 역사관광 검색에서 66곳 조회, 목록·지도 마커 표시, 경복궁 상세 소개·사진·방문 정보·기상청 날씨 표시를 확인했습니다.
+- 별도의 `Computer Use 검증용 여행`(2026-11-01)을 생성하고 경복궁·경희궁 2곳 추가, 직선거리 기준 최단 순서 적용, 카카오내비 자동차 경로 지도 표시, 새로고침 후 2개 장소 저장 유지를 확인했습니다. 기존 여행 계획은 보존했습니다.
+- 현재 위치 권한을 사용하는 내 주변 검색은 이번 검증에 포함하지 않았습니다.
