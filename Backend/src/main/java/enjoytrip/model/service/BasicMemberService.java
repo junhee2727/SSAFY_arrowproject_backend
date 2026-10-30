@@ -56,6 +56,7 @@ public final class BasicMemberService implements MemberService {
     public void delete(String id) {
         synchronized (MemoryLock.MONITOR) {
             requireMember(id);
+            enjoytrip.model.dao.InMemoryBoardDao.getInstance().deleteByAuthorId(id);
             dao.delete(id);
         }
     }
