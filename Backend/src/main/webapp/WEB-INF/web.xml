@@ -11,5 +11,5 @@
         <cookie-config><http-only>true</http-only></cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
-    <welcome-file-list><welcome-file>pages/map.html</welcome-file></welcome-file-list>
+    <welcome-file-list><welcome-file>index.html</welcome-file></welcome-file-list>
 </web-app>
