@@ -16,7 +16,7 @@
 ## 참고와 구조
 
 - 기준: [Notion API 명세서](https://www.notion.so/40919c9b9e0b80158b3deaf34f1974dc)
-- 참고 예제: `/Users/junheelee/Downloads/BE_06_Project_sol`
+- 참고 예제: `BE_06_Project_sol`의 Servlet·Service·DAO 구성
 - 예제의 `MemberController/AuthController → MemberService/BasicMemberService → MemberDao` 분리와 singleton 흐름을 따릅니다. 이번 명세는 JSON API이므로 기존 정적 화면을 View로 사용하며, 예제의 action/JSP 화면 이동을 그대로 복사하지 않았습니다.
 - 예제 FileMemberDao의 파일 직렬화 대신 저장소 지침에 따라 InMemoryMemberDao/InMemoryBoardDao를 사용합니다.
 
@@ -39,64 +39,119 @@ Frontend/
 
 이메일 중복 가입과 회원/게시글 연계 변경은 공통 잠금으로 보호합니다. 비밀번호는 회원별 salt와 PBKDF2-HMAC-SHA256 해시로 저장하며 공개 응답 DTO로만 반환합니다. 로그인 성공 시 세션 ID를 바꾸고, 탈퇴한 회원의 기존 세션은 다음 인증 검사에서 거절합니다. 이름·본문은 텍스트로 렌더링합니다.
 
-## macOS 빌드
+## 포트와 실행 구성
 
-Java 25, Maven, Tomcat 11이 필요합니다. 현재 확인한 설치는 Homebrew Tomcat 11.0.27입니다.
+일반적으로 Tomcat 백엔드는 **8080**, VS Code Live Server는 **5500**을 사용합니다. 이 프로젝트의 현재 실행 안내는 **Tomcat 하나가 127.0.0.1:5500에서 프론트엔드와 API를 함께 제공하는 구성**입니다. Live Server를 함께 실행할 필요는 없습니다.
 
-```sh
+이 구성은 카카오 JavaScript 키의 등록 origin인 `http://127.0.0.1:5500`과 현재 API 클라이언트의 same-origin 요청을 맞추기 위한 것입니다. Maven으로 만든 WAR에 프론트엔드 파일도 포함됩니다.
+
+| 구성 | 프론트엔드 | 백엔드 | 현재 지원 상태 |
+| --- | --- | --- | --- |
+| 현재 통합 실행 | Tomcat 5500의 `/enjoytrip/pages/` | 같은 Tomcat 5500의 `/enjoytrip/api/` | 아래 안내대로 실행 |
+| 서버 분리 | Live Server 5500 | Tomcat 8080 | API 서버 주소, CORS 및 세션 쿠키 처리 조정 필요 |
+
+Live Server 5500과 Tomcat 8080을 각각 켜는 것만으로 현재 회원·게시판 API가 연결되지는 않습니다. 아래 명령의 **5500은 Live Server 포트가 아니라 프로젝트 Tomcat의 HTTP 포트**입니다.
+
+## Windows 준비
+
+아래 명령은 **Windows PowerShell** 기준입니다. 저장소를 예를 들어 `C:\work\SSAFY_arrowproject_backend`에 내려받고, 실제 설치 경로에 맞게 예제 경로를 수정합니다.
+
+- **JDK 25**: JRE가 아닌 JDK를 설치합니다.
+- **Apache Maven**: [공식 설치 안내](https://maven.apache.org/install.html)에 따라 Binary ZIP을 압축 해제합니다.
+- **Apache Tomcat 11**: [공식 다운로드](https://tomcat.apache.org/download-11.cgi)에서 Windows용 ZIP 배포본을 받아 압축 해제합니다. 아래에서는 Windows 서비스 대신 `catalina.bat`으로 실행합니다.
+- 선택 도구: 프론트엔드 테스트에는 Node.js, HTTP API 검사에는 Python 3가 필요합니다.
+
+예제 설치 폴더는 `C:\dev\jdk-25`, `C:\dev\apache-maven`, `C:\dev\apache-tomcat-11`입니다. 각 폴더 바로 아래에 `bin`이 있어야 합니다.
+
+```powershell
+Set-Location "C:\work\SSAFY_arrowproject_backend"
+$ProjectRoot = (Get-Location).Path
+$env:JAVA_HOME = "C:\dev\jdk-25"
+$env:Path = "$env:JAVA_HOME\bin;C:\dev\apache-maven\bin;$env:Path"
+
 java -version
-mvn -version
-/usr/libexec/java_home -V
-export JAVA_HOME="$(/usr/libexec/java_home -v 25)"
-export PATH="$JAVA_HOME/bin:$PATH"
-java -version
+javac -version
 mvn -version
 ```
 
-두 Java 버전이 모두 25인지 확인합니다. Maven 기본 JDK가 27 등 다른 버전이어도 compiler release를 내리지 않고 JAVA_HOME을 지정합니다.
+`java`, `javac`, Maven이 사용하는 Java 버전이 모두 **25**인지 확인합니다. Maven이 다른 JDK를 사용하면 `JAVA_HOME`과 `Path`를 수정하고 compiler release는 25로 유지합니다. 위 환경 변수는 현재 PowerShell 창에 적용되므로 새 창에서는 다시 지정합니다.
 
-관광·지도 키 설정이 없으면 저장소 루트에서 아래 파일을 한 번 복사하고 브라우저용 키를 입력합니다. 회원·게시판은 이 키가 없어도 동작합니다.
+## 키 설정과 빌드
 
-```sh
-cp Frontend/config.env.example Frontend/config.env
+저장소 루트에서 설정 파일을 처음 한 번 복사합니다. 기존 설정이 있으면 덮어쓰지 않습니다.
+
+```powershell
+if (-not (Test-Path ".\Frontend\config.env")) {
+    Copy-Item ".\Frontend\config.env.example" ".\Frontend\config.env"
+}
+notepad .\Frontend\config.env
 ```
 
-config.env는 브라우저 접근이 가능한 공개 API 키 전용 파일이며 Git에 커밋하지 않습니다. 로컬 WAR에는 현재 파일이 포함되므로 외부에 WAR를 공유할 때도 키 정책을 확인합니다.
+관광·지도용 브라우저 API 키를 입력하고 저장합니다. 회원·게시판은 이 키가 없어도 동작합니다. 카카오 JavaScript 키에 등록된 사이트 주소는 **`http://127.0.0.1:5500`**이므로 브라우저에서도 같은 호스트·포트를 사용합니다. `localhost:5500`은 다른 origin입니다.
 
-```sh
-cd Backend
+`config.env`는 브라우저에서 읽을 수 있는 공개 API 키 전용 파일이며 Git에 커밋하지 않습니다. 로컬 WAR에도 포함되므로 서버 비밀 키를 넣지 않습니다. 키를 수정하면 WAR를 다시 빌드·배포합니다.
+
+```powershell
+Push-Location .\Backend
 mvn test
 mvn clean package
+Pop-Location
 ```
 
-결과는 `Backend/target/enjoytrip.war`입니다. Maven WAR 설정이 Frontend의 페이지·JS·CSS·리소스를 같은 웹앱에 포함합니다. 프론트엔드 별도 빌드/의존성 설치는 필요하지 않습니다.
+빌드 성공 후 결과는 `Backend\target\enjoytrip.war`입니다. Maven WAR 설정이 Frontend의 페이지·JS·CSS·리소스를 같은 웹앱에 포함합니다. 프론트엔드 별도 빌드/의존성 설치는 필요하지 않습니다.
 
-## 실제 로컬 Tomcat 배포
+## Windows Tomcat 배포와 실행
 
-저장소 루트에서 실행합니다.
+앞에서 환경 변수를 설정한 **같은 PowerShell 창**, 저장소 루트에서 실행합니다. 설치 폴더인 `CATALINA_HOME`과 프로젝트 실행 폴더인 `CATALINA_BASE`를 분리합니다. Tomcat의 [공식 실행 안내](https://tomcat.apache.org/tomcat-11.0-doc/RUNNING.txt)를 기준으로 구성합니다.
 
-```sh
-Backend/scripts/tomcat.sh version
-Backend/scripts/tomcat.sh start
+```powershell
+$env:CATALINA_HOME = "C:\dev\apache-tomcat-11"
+$env:CATALINA_BASE = Join-Path $ProjectRoot "Backend\.runtime\tomcat"
+$env:JRE_HOME = $env:JAVA_HOME
+$env:CATALINA_OPTS = "-Dfile.encoding=UTF-8"
+
+foreach ($dir in @("conf", "logs", "temp", "webapps", "work")) {
+    New-Item -ItemType Directory -Force -Path (Join-Path $env:CATALINA_BASE $dir) | Out-Null
+}
+if (-not (Test-Path "$env:CATALINA_BASE\conf\server.xml")) {
+    Copy-Item "$env:CATALINA_HOME\conf\*" "$env:CATALINA_BASE\conf" -Recurse
+}
 ```
 
-- CATALINA_HOME: `$(brew --prefix tomcat)/libexec` (이 Mac: `/opt/homebrew/opt/tomcat/libexec`)
-- CATALINA_BASE: `/Users/junheelee/Work/SSAFY_arrowproject_backend/Backend/.runtime/tomcat`
-- 배포: `.runtime/tomcat/webapps/enjoytrip.war`
+처음 실행하기 전에 다음 명령으로 HTTP 포트를 **5500**, 종료 포트를 **5501**, 바인딩 주소를 **127.0.0.1**로 설정합니다. 이미 실행 중인 Tomcat이 있다면 먼저 종료한 뒤 설정합니다.
+
+```powershell
+$serverXmlPath = Join-Path $env:CATALINA_BASE "conf\server.xml"
+[xml]$serverXml = Get-Content -LiteralPath $serverXmlPath -Raw
+$serverXml.Server.SetAttribute("port", "5501")
+$serverXml.Server.SetAttribute("address", "127.0.0.1")
+$httpConnector = $serverXml.Server.Service.Connector | Where-Object { $_.protocol -eq "HTTP/1.1" }
+$httpConnector.SetAttribute("port", "5500")
+$httpConnector.SetAttribute("address", "127.0.0.1")
+$httpConnector.SetAttribute("URIEncoding", "UTF-8")
+$serverXml.Save($serverXmlPath)
+
+Copy-Item ".\Backend\target\enjoytrip.war" "$env:CATALINA_BASE\webapps\enjoytrip.war" -Force
+& "$env:CATALINA_HOME\bin\catalina.bat" version
+& "$env:CATALINA_HOME\bin\catalina.bat" run
+```
+
+`version` 출력에서 Java 25, Tomcat 11, 지정한 `CATALINA_BASE`를 확인합니다. `run`은 현재 창에 로그를 출력하며, 종료할 때는 **Ctrl+C**를 누릅니다. 다른 창에서 테스트를 실행할 수 있습니다.
+
+- CATALINA_HOME: `C:\dev\apache-tomcat-11` (실제 설치 경로)
+- CATALINA_BASE: `<저장소>\Backend\.runtime\tomcat`
+- 배포 파일: `<CATALINA_BASE>\webapps\enjoytrip.war`
 - context path: `/enjoytrip`
-- HTTP 접속: **127.0.0.1:5500**, 종료 포트: **127.0.0.1:5501**
-- 기본 Java: `/usr/libexec/java_home -v 25`로 발견한 JDK
-- 로그: `Backend/.runtime/tomcat/logs/`
+- 접속: [관광 지도](http://127.0.0.1:5500/enjoytrip/pages/map.html), [자유게시판](http://127.0.0.1:5500/enjoytrip/pages/free-board.html), [마이페이지](http://127.0.0.1:5500/enjoytrip/pages/my-page.html)
+- 로그: `<CATALINA_BASE>\logs`
 
-접속: [관광 지도](http://127.0.0.1:5500/enjoytrip/pages/map.html), [자유게시판](http://127.0.0.1:5500/enjoytrip/pages/free-board.html), [마이페이지](http://127.0.0.1:5500/enjoytrip/pages/my-page.html)
+별도 창으로 서버를 실행하려면 `run` 대신 `start`를 사용합니다. 그 경우 같은 환경 변수가 설정된 PowerShell에서 아래 명령으로 종료합니다.
 
-이번 작업의 실제 실행 검증은 `run` 모드로 수행했습니다. 포그라운드 로그를 보려면 `start` 대신 `run`을 사용하고 Control+C로 종료합니다. `ENJOYTRIP_PORT`로 HTTP 포트를 바꿀 수 있으며 다음 번호를 종료 포트로 사용합니다. `CATALINA_HOME`, `ENJOYTRIP_JAVA_HOME`으로 설치 경로를 명시할 수도 있습니다. 기존 Homebrew 서비스/STS Tomcat과 별도의 CATALINA_BASE를 사용합니다. 카카오에 등록된 사이트 주소는 `http://127.0.0.1:5500`이므로 브라우저도 이 호스트와 포트를 사용합니다. Python 정적 서버나 다른 Tomcat이 5500을 사용 중이면 먼저 해당 서버를 종료해 포트 충돌을 해결해야 합니다.
-
-```sh
-Backend/scripts/tomcat.sh stop
+```powershell
+& "$env:CATALINA_HOME\bin\catalina.bat" stop
 ```
 
-소스 수정 후에는 `stop → mvn clean package → start` 순서로 다시 배포합니다. Python 5500 정적 서버는 Servlet/JSP를 실행하지 못하므로 회원·게시판 연동 확인은 위 Tomcat 주소에서 진행합니다.
+소스 수정 후에는 **서버 종료 → WAR 재빌드 → WAR 복사 → 서버 실행** 순서로 다시 배포합니다. Python 정적 서버나 STS 서버가 5500을 점유하고 있으면 먼저 종료합니다. Python 정적 서버는 Servlet/JSP를 실행하지 못하므로 회원·게시판 연동은 위 Tomcat 주소에서 확인합니다. 저장소의 `Backend/scripts/tomcat.sh`는 macOS용이며 Windows에서는 위 `.bat` 명령을 사용합니다.
 
 ## API 요약
 
@@ -120,36 +175,56 @@ Notion의 회원가입 표와 상세 경로가 달랐던 부분은 표 기준 `/
 
 직접 HTTP 클라이언트를 사용할 때 변경 요청에는 `X-Requested-With: EnjoyTrip`을 지정합니다. 본문이 있으면 `Content-Type: application/json`도 필요합니다. Origin이 있으면 같은 origin이어야 하며, 브라우저의 cross-site 요청은 거절합니다. 앱은 같은 origin의 JSESSIONID 쿠키를 전송합니다. 알 수 없는 JSON 필드는 400이고, 클라이언트가 작성자나 권한을 지정할 수 없습니다.
 
-## 검증
+## Windows에서 검증
 
-```sh
-cd Backend
+JDK·Maven 환경 변수를 설정한 PowerShell에서 저장소 루트를 기준으로 실행합니다. API·브라우저 검사는 Tomcat이 실행 중이어야 합니다.
+
+```powershell
+Push-Location .\Backend
 mvn test
 mvn clean package
-cd ..
-node --test Frontend/tests/*.test.js
-python3 Backend/scripts/check_api.py
+Pop-Location
+
+# Node.js 설치 시: PowerShell에서 테스트 파일 경로를 배열로 전달합니다.
+$testFiles = Get-ChildItem .\Frontend\tests\*.test.js | ForEach-Object { $_.FullName }
+node --test $testFiles
+
+# Python 3와 Windows Python Launcher 설치 시
+py -3 .\Backend\scripts\check_api.py
 ```
 
-`check_api.py`는 실행 중인 Tomcat에서 11개 API의 한글 왕복, 세션 ID 갱신/쿠키, 중복 가입, 검증 오류, 작성자 권한, 정렬/검색/페이징, 이름 반영, 탈퇴 연계와 다른 세션 무효화를 검증합니다. 고유한 테스트 회원을 만들고 종료 시 정리합니다.
+`py`가 없다면 Python 3의 `python` 명령으로 바꿔 실행합니다. `check_api.py`는 11개 API의 한글 왕복, 세션 ID 갱신/쿠키, 중복 가입, 검증 오류, 작성자 권한, 정렬/검색/페이징, 이름 반영, 탈퇴 연계와 다른 세션 무효화를 검증합니다. 고유한 테스트 회원을 만들고 종료 시 정리합니다. 기본 검사 주소는 `http://127.0.0.1:5500/enjoytrip`입니다.
 
-Playwright와 Chrome이 있는 환경에서는 브라우저 검사도 실행할 수 있습니다.
+Chrome과 Node.js/npm이 설치되어 있으면 선택적으로 브라우저 검사도 실행할 수 있습니다. Playwright는 임시 폴더에 설치하고 Windows Chrome 경로를 명시합니다.
 
-```sh
-node Frontend/tests/browser-smoke.cjs
+```powershell
+$browserTools = Join-Path $env:TEMP "enjoytrip-browser-tools"
+npm install --prefix "$browserTools" playwright
+$env:NODE_PATH = Join-Path $browserTools "node_modules"
+$env:CHROME_PATH = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+$env:ENJOYTRIP_BASE_URL = "http://127.0.0.1:5500/enjoytrip"
+node .\Frontend\tests\browser-smoke.cjs
 ```
 
-Playwright를 공용 위치에 설치했다면 NODE_PATH를 해당 node_modules로 지정합니다. CHROME_PATH와 ENJOYTRIP_BASE_URL을 바꿔 실행 환경을 조정할 수 있습니다. 기본 Chrome 경로는 macOS Google Chrome이며, 기본 검사 주소는 127.0.0.1:5500/enjoytrip입니다.
+Chrome 설치 위치가 다르면 `CHROME_PATH`를 실제 `chrome.exe` 경로로 수정합니다. 스크립트 내부 기본값은 macOS 경로이므로 Windows에서는 이 변수를 지정해야 합니다.
 
-브라우저 검사는 회원가입·로그인·새로고침 세션·글 작성/수정/삭제·다른 브라우저 조회·검색/페이징·이름 변경·로그아웃·탈퇴, 작성 중 세션 만료 후 로그인 복구, 오류 후 재시도, 모달 Escape/포커스 복원을 확인합니다. 1440/820/390px 캡처는 `Backend/.runtime/screenshots/`에 저장됩니다. 지도 API 키를 비운 상황에서도 회원 모달은 열리는지 별도로 확인합니다. 실제 관광 API 결과는 키와 허용 origin 및 외부 서비스 상태에 따라 달라집니다.
+브라우저 검사는 회원가입·로그인·새로고침 세션·글 작성/수정/삭제·다른 브라우저 조회·검색/페이징·이름 변경·로그아웃·탈퇴, 작성 중 세션 만료 후 로그인 복구, 오류 후 재시도, 모달 Escape/포커스 복원을 확인합니다. 1440/820/390px 캡처는 `Backend\.runtime\screenshots`에 저장됩니다. 지도 API 키를 비운 상황에서도 회원 모달이 열리는지 별도로 확인합니다. 실제 관광 API 결과는 키와 허용 origin 및 외부 서비스 상태에 따라 달라집니다.
 
-## STS 설정
+## Windows STS 설정
 
-기존 메타데이터의 Java 1.8 / Dynamic Web Module 2.5를 **Java 25 / Web 6.1**로 정렬했습니다. Maven compiler 3.15.0(release 25), WAR 3.5.1, Servlet 6.1.0 provided, JSTL API 3.0.2 + 구현 3.0.1을 사용합니다.
+1. `File → Import → Maven → Existing Maven Projects`에서 `Backend` 폴더를 선택합니다.
+2. `Window → Preferences → Java → Installed JREs`에 Windows의 JDK 25 설치 폴더를 추가하고, 프로젝트 JRE도 JDK 25로 지정합니다.
+3. 프로젝트에서 `Maven → Update Project`를 실행합니다.
+4. `Server → Runtime Environments`에 설치한 Apache Tomcat 11을 추가하고 JRE를 JDK 25로 지정합니다.
+5. STS에서 직접 배포한다면 Servers 뷰에서 HTTP 포트 **5500**, context path **`/enjoytrip`**을 확인하고 `http://127.0.0.1:5500/enjoytrip/pages/map.html`로 접속합니다. 위 PowerShell Tomcat과 동시에 같은 포트로 실행하지 않습니다.
 
-STS에서 Maven Update Project를 실행한 뒤 Installed JREs는 JDK 25, Target Runtime은 설치된 Apache Tomcat 11을 선택합니다. STS 자체 서버를 쓰면 그 서버의 CATALINA_BASE/포트는 위 독립 실행 설정과 별개입니다. 이 문서의 자동 검증은 명시한 독립 CATALINA_BASE에 배포한 WAR를 기준으로 수행합니다.
+현재 Eclipse 메타데이터는 **Java 25 / Dynamic Web Module 6.0**이고, `pom.xml`과 `web.xml`은 **Servlet 6.1**을 대상으로 합니다. STS/WTP가 Web Facet 6.1을 지원하면 Project Facets도 6.1로 맞춥니다. 지원하지 않으면 관련 도구를 업데이트하거나, 위 Maven WAR + Tomcat 11 배포 절차로 실행합니다. Servlet 의존성을 6.0 또는 `javax.servlet`로 바꾸지 않습니다.
 
-## 검증 결과
+Maven compiler 3.15.0(release 25), WAR 3.5.1, Servlet 6.1.0 provided, JSTL API 3.0.2 + 구현 3.0.1을 사용합니다. STS 서버는 자체 `CATALINA_BASE`를 사용하므로 위 PowerShell 설정과 별개입니다. Maven이 `Frontend`를 WAR에 포함하므로, STS 직접 배포에서 프론트 리소스가 누락되면 빌드한 WAR를 위 절차로 배포합니다.
+
+## 기존 검증 결과
+
+아래 결과는 macOS의 JDK 25 / Tomcat 11.0.27 / Chrome에서 확인한 기록입니다. Windows 실행 명령은 공식 문서와 프로젝트 설정을 기준으로 작성했으며 Windows 실환경 실행은 아직 검증하지 않았습니다.
 
 - JDK 25의 Maven 테스트 8개와 clean package 통과
 - 프론트엔드 node:test 75개 통과
